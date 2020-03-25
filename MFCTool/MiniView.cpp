@@ -36,10 +36,8 @@ void CMiniView::OnDraw(CDC* pDC)
 	if (nullptr == pMain)
 		return; 
 	CMFCToolView* pView = dynamic_cast<CMFCToolView*>(pMain->m_MainSplitterWnd.GetPane(0, 1)); 
-	if (nullptr == pView)
-		return; 
-
-	pView->m_pTerrain->MiniRender(); 
+	if (pView && pView->m_pTerrain)
+		pView->m_pTerrain->MiniRender(); 
 	GET_INSTANCE(CDevice)->Render_End(m_hWnd);
 }
 

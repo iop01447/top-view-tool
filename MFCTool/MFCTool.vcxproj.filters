@@ -34,9 +34,6 @@
     <Filter Include="04.Texture\SingleTex">
       <UniqueIdentifier>{0db3a356-a1f9-4d3f-9798-69427ab64eb5}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Terrain">
-      <UniqueIdentifier>{5ef9d7fe-67a8-4d53-9663-93612b6ef8ff}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01.View\FormView">
       <UniqueIdentifier>{7351de6c-d75f-4470-8b20-2591f4364c61}</UniqueIdentifier>
     </Filter>
@@ -57,6 +54,9 @@
     </Filter>
     <Filter Include="01.View\FormView\MapTool\TileTool">
       <UniqueIdentifier>{22f1dda5-7ad8-44e5-bf1e-aafd912dd56f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06.Terrain">
+      <UniqueIdentifier>{5ef9d7fe-67a8-4d53-9663-93612b6ef8ff}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -103,12 +103,11 @@
       <Filter>01.View\FormView\MapTool</Filter>
     </ClInclude>
     <ClInclude Include="Terrain.h">
-      <Filter>Terrain</Filter>
+      <Filter>06.Terrain</Filter>
     </ClInclude>
     <ClInclude Include="TextureMgr.h">
       <Filter>97.Manager\00.TextureMgr</Filter>
     </ClInclude>
-    <ClInclude Include="FileInfo.h" />
     <ClInclude Include="MultiTex.h">
       <Filter>04.Texture\MultiTex</Filter>
     </ClInclude>
@@ -117,6 +116,9 @@
     </ClInclude>
     <ClInclude Include="ObjectTool.h">
       <Filter>01.View\FormView\MapTool\ObjectTool</Filter>
+    </ClInclude>
+    <ClInclude Include="FileInfo.h">
+      <Filter>05.FileInfo</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -160,17 +162,19 @@
       <Filter>04.Texture\MultiTex</Filter>
     </ClCompile>
     <ClCompile Include="Terrain.cpp">
-      <Filter>Terrain</Filter>
+      <Filter>06.Terrain</Filter>
     </ClCompile>
     <ClCompile Include="TextureMgr.cpp">
       <Filter>97.Manager\00.TextureMgr</Filter>
     </ClCompile>
-    <ClCompile Include="FileInfo.cpp" />
     <ClCompile Include="TileTool.cpp">
       <Filter>01.View\FormView\MapTool\TileTool</Filter>
     </ClCompile>
     <ClCompile Include="ObjectTool.cpp">
       <Filter>01.View\FormView\MapTool\ObjectTool</Filter>
+    </ClCompile>
+    <ClCompile Include="FileInfo.cpp">
+      <Filter>05.FileInfo</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

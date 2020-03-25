@@ -47,12 +47,14 @@ public:
 	int m_iChangeSpeed;
 
 	MAPTOOL::ID m_eToolID{ MAPTOOL::ID_END };
+	CPoint m_tMouseOldPt;
 
 public:
 	virtual void OnInitialUpdate();
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
+	afx_msg void OnRButtonDown(UINT nFlags, CPoint point);
 };
 
 #ifndef _DEBUG  // MFCToolView.cpp의 디버그 버전

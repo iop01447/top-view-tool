@@ -4,6 +4,7 @@
 
 // CMapTool 대화 상자입니다.
 
+class CTerrain;
 class CTileTool;
 class CObjectTool;
 class CMapTool : public CDialog
@@ -29,9 +30,14 @@ public:
 	CObjectTool* m_pObjectTool;
 
 public:
-	CComboBox m_cbTest;
+	CComboBox m_LayerList;
 	CComboBox m_Backgrundlist;
 
+	CTerrain* m_pTerrainArr[MAPTOOL::ID_END];
+
+public:
+	void Init_Terrain();
+	void Init_Background();
 
 public:
 	virtual BOOL OnInitDialog();
@@ -42,6 +48,8 @@ public:
 	afx_msg void OnCbnSelchangeComboTest();
 
 	afx_msg void OnBnClickedSave();
-	afx_msg void OnBnClickedButtonLoad();
-	afx_msg void OnCbnSelchangeComboSelectField();
+	afx_msg void OnBnClickedLoad();
+	
+	afx_msg void OnCbnLayerSelchange();
+	afx_msg void OnCbnBackgroundSelchange();
 };

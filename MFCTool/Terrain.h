@@ -15,11 +15,15 @@ public:
 	void SetRatio(D3DXMATRIX* pOut, const float& fRatioX, const float& fRatioY);
 	void MiniRender();
 public:
-	HRESULT Initialize();
+	HRESULT Initialize(int iTileX, int iTileY, BYTE byDrawID, E_TILE::OPTION eOption);
 	void Render(); 
 	void Release(); 
 private:
 	vector<TILE*> m_vecTile;
 	CMFCToolView* m_pView; 
+
+public:
+	int m_iTileX{ 0 };
+	int m_iTileY{ 0 };
 };
 

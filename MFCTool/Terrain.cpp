@@ -148,21 +148,24 @@ void CTerrain::SetRatio(D3DXMATRIX * pOut, const float & fRatioX, const float & 
 
 }
 
-HRESULT CTerrain::Initialize()
+HRESULT CTerrain::Initialize(int iTileX, int iTileY, BYTE byDrawID, E_TILE::OPTION eOption)
 {
+	m_iTileX = iTileX;
+	m_iTileY = iTileY;
+
 	float fX = 0.f, fY = 0.f; 
 	TILE* pTile = nullptr; 
-	for (int i = 0 ; i < TILEY ; ++i)
+	for (int i = 0 ; i < iTileY; ++i)
 	{
-		for (int j = 0 ; j < TILEX ; ++j)
+		for (int j = 0 ; j < iTileX; ++j)
 		{
 			fX = float((j * TILECX) + (TILECX >> 1));
 			fY = float((i * TILECY) + (TILECY >> 1));
 			pTile = new TILE;
 			pTile->vPos = { fX, fY, 0.f };
 			pTile->vSize = { 1.f, 1.f, 0.f };
-			pTile->byDrawID = 0;
-			pTile->byOption = 0;
+			pTile->byDrawID = byDrawID;
+			pTile->byOption = eOption;
 			m_vecTile.emplace_back(pTile);
 		}
 	}

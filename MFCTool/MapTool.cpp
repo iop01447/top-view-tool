@@ -20,36 +20,38 @@ IMPLEMENT_DYNAMIC(CMapTool, CDialog)
 CMapTool::CMapTool(CWnd* pParent /*=NULL*/)
 	: CDialog(IDD_MAPTOOL, pParent)
 {
-
 }
 
 CMapTool::~CMapTool()
 {
 	Safe_Delete(m_pTileTool);
 	Safe_Delete(m_pObjectTool);
+
+	for(int i=0; i<MAPTOOL::ID_END; ++i)
+		Safe_Delete(m_pTerrainArr[i]);
 }
 
 void CMapTool::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
-	DDX_Control(pDX, IDC_COMBO_TEST, m_cbTest);
+	DDX_Control(pDX, IDC_COMBO_TEST, m_LayerList);
 
-	m_cbTest.InsertString(0, L"1번째");
-	m_cbTest.InsertString(1, L"2번째");
-	m_cbTest.InsertString(2, L"3번째");
+	for (int i = 0; i < LAYER::ID_END; ++i) {
+		m_LayerList.InsertString(i, LAYER::str[i].c_str());
+	}
 
-	m_cbTest.SetCurSel(0);
+	m_LayerList.SetCurSel(0);
 	DDX_Control(pDX, IDC_COMBO_BACK_GRUND, m_Backgrundlist);
 }
 
 
 BEGIN_MESSAGE_MAP(CMapTool, CDialog)
 	ON_BN_CLICKED(IDC_BUTTON1, &CMapTool::OnBnClickedSave)
-	ON_CBN_SELCHANGE(IDC_COMBO_TEST, &CMapTool::OnCbnSelchangeComboTest)
+	ON_CBN_SELCHANGE(IDC_COMBO_TEST, &CMapTool::OnCbnLayerSelchange)
 	ON_BN_CLICKED(IDC_BUTTON2, &CMapTool::OnBnClickedTileTool)
 	ON_BN_CLICKED(IDC_BUTTON7, &CMapTool::OnBnClickedButtonObjectTool)
-	ON_BN_CLICKED(IDC_BUTTON6, &CMapTool::OnBnClickedButtonLoad)
-	ON_CBN_SELCHANGE(IDC_COMBO_BACK_GRUND, &CMapTool::OnCbnSelchangeComboSelectField)
+	ON_BN_CLICKED(IDC_BUTTON6, &CMapTool::OnBnClickedLoad)
+	ON_CBN_SELCHANGE(IDC_COMBO_BACK_GRUND, &CMapTool::OnCbnBackgroundSelchange)
 END_MESSAGE_MAP()
 
 
@@ -66,25 +68,28 @@ void CMapTool::OnBnClickedSave()
 	lstrcat(szPath, L"\\Data");
 	Dlg.m_ofn.lpstrInitialDir = szPath;
 
-	if (IDOK == Dlg.DoModal())
-	{
-		CString strPath = Dlg.GetPathName();
+	if (IDOK != Dlg.DoModal()) return;
+	
+	CString strPath = Dlg.GetPathName();
 
-		HANDLE hFile = CreateFile(strPath.GetString(), GENERIC_WRITE, 0, 0, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
+	HANDLE hFile = CreateFile(strPath.GetString(), GENERIC_WRITE, 0, 0, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
 
-		if (INVALID_HANDLE_VALUE == hFile)
-			return;
+	if (INVALID_HANDLE_VALUE == hFile)
+		return;
 
-		CMainFrame* pMain = dynamic_cast<CMainFrame*>(::AfxGetApp()->GetMainWnd());
-		CMFCToolView* pView = dynamic_cast<CMFCToolView*>(pMain->m_MainSplitterWnd.GetPane(0, 1));
-		vector<TILE*>& rvecTerrain = pView->m_pTerrain->Get_Tile();
+	CMainFrame* pMain = dynamic_cast<CMainFrame*>(::AfxGetApp()->GetMainWnd());
+	CMFCToolView* pView = dynamic_cast<CMFCToolView*>(pMain->m_MainSplitterWnd.GetPane(0, 1));
+	
+	for (int i = 0; i < LAYER::ID_END; ++i) {
+		vector<TILE*>& rvecTerrain = m_pTerrainArr[i]->Get_Tile();
 
 		DWORD dwByte = 0;
 		for (auto& pTile : rvecTerrain)
 			WriteFile(hFile, pTile, sizeof(TILE), &dwByte, nullptr);
-
-		CloseHandle(hFile);
 	}
+
+	CloseHandle(hFile);
+	
 }
 
 
@@ -119,61 +124,30 @@ void CMapTool::OnCbnSelchangeComboTest()
 }
 
 
-BOOL CMapTool::OnInitDialog()
+void CMapTool::Init_Terrain()
 {
-	CDialog::OnInitDialog();
-
-	// TODO:  여기에 추가 초기화 작업을 추가합니다.
-
-	m_pTileTool = new CTileTool;
-	m_pObjectTool = new CObjectTool;
-
-	if (m_pTileTool->GetSafeHwnd() == nullptr)
-		m_pTileTool->Create(IDD_TILETOOL);
-	if (m_pObjectTool->GetSafeHwnd() == nullptr)
-		m_pObjectTool->Create(IDD_OBJECTTOOL);
-
-	return TRUE;  // return TRUE unless you set the focus to a control
-				  // 예외: OCX 속성 페이지는 FALSE를 반환해야 합니다.
-}
-
-
-void CMapTool::OnBnClickedTileTool()
-{
-	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	m_pTileTool->ShowWindow(SW_SHOW);
-
 	CMainFrame* pMain = dynamic_cast<CMainFrame*>(::AfxGetApp()->GetMainWnd());
 	CMFCToolView* pView = dynamic_cast<CMFCToolView*>(pMain->m_MainSplitterWnd.GetPane(0, 1));
-	pView->m_eToolID = MAPTOOL::TILE;
+
+	// 여기서 하면 텍스쳐가 안들어가진다. 디바이스 Init을 안해서..
+	//GET_INSTANCE(CTextureMgr)->InsertTexture(CTextureMgr::SINGLETEX, L"../Texture/Cube.png", L"Cube");
+	//GET_INSTANCE(CTextureMgr)->InsertTexture(CTextureMgr::MULTITEX, L"../Texture/Stage/Terrain/Tile2/Tile%d.png", L"Terrain", L"Tile", 9);
+
+	for (int i = 0; i < MAPTOOL::ID_END; ++i) {
+		if (nullptr == m_pTerrainArr[i])
+		{
+			m_pTerrainArr[i] = new CTerrain;
+			if (FAILED(m_pTerrainArr[i]->Initialize((i+1) * TILEX, (i + 1) * TILEY, i, E_TILE::OPTION_END)))
+				AfxMessageBox(L"Terrain Initialize Failed");
+			m_pTerrainArr[i]->Set_View(pView);
+		}
+	}
+	pView->m_pTerrain = m_pTerrainArr[0];
 }
 
-
-void CMapTool::OnBnClickedButtonObjectTool()
+void CMapTool::Init_Background()
 {
-	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	m_pObjectTool->ShowWindow(SW_SHOW);
-
-	CMainFrame* pMain = dynamic_cast<CMainFrame*>(::AfxGetApp()->GetMainWnd());
-	CMFCToolView* pView = dynamic_cast<CMFCToolView*>(pMain->m_MainSplitterWnd.GetPane(0, 1));
-	pView->m_eToolID = MAPTOOL::OBJECT;
-}
-
-
-void CMapTool::OnBnClickedButtonLoad()
-{
-	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-}
-
-
-void CMapTool::OnCbnSelchangeComboSelectField()
-{
-	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-
-	//int iIndex;
-	//iIndex = m_Backgrundlist.GetCurSel();
-
-	CString tpath = _T("폴더 경로/*.*");
+	CString tpath = _T("../Texture/Stage/Background/*.*");
 
 	//검색 클래스
 	CFileFind finder;
@@ -203,17 +177,76 @@ void CMapTool::OnCbnSelchangeComboSelectField()
 			m_Backgrundlist.AddString(fileName);
 			//읽어온 파일 이름을 리스트박스에 넣음
 		}
-		// 디렉터리 일때
-		//if (finder.IsDirectory())
-		//{
-		// 필요하면 여기서 처리
-		//DirName = finder.GetFileName();
-		//}
 	}
-	//return TRUE;
+
+	m_Backgrundlist.SetCurSel(0);
+}
+
+BOOL CMapTool::OnInitDialog()
+{
+	CDialog::OnInitDialog();
+
+	// TODO:  여기에 추가 초기화 작업을 추가합니다.
+
+	m_pTileTool = new CTileTool;
+	m_pObjectTool = new CObjectTool;
+
+	if (m_pTileTool->GetSafeHwnd() == nullptr)
+		m_pTileTool->Create(IDD_TILETOOL);
+	if (m_pObjectTool->GetSafeHwnd() == nullptr)
+		m_pObjectTool->Create(IDD_OBJECTTOOL);
+
+	Init_Terrain();
+	Init_Background();
+
+	return TRUE;  // return TRUE unless you set the focus to a control
+				  // 예외: OCX 속성 페이지는 FALSE를 반환해야 합니다.
+}
 
 
+void CMapTool::OnBnClickedTileTool()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	m_pTileTool->ShowWindow(SW_SHOW);
+
+	CMainFrame* pMain = dynamic_cast<CMainFrame*>(::AfxGetApp()->GetMainWnd());
+	CMFCToolView* pView = dynamic_cast<CMFCToolView*>(pMain->m_MainSplitterWnd.GetPane(0, 1));
+	pView->m_eToolID = MAPTOOL::TILE;
+}
 
 
+void CMapTool::OnBnClickedButtonObjectTool()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	m_pObjectTool->ShowWindow(SW_SHOW);
 
+	CMainFrame* pMain = dynamic_cast<CMainFrame*>(::AfxGetApp()->GetMainWnd());
+	CMFCToolView* pView = dynamic_cast<CMFCToolView*>(pMain->m_MainSplitterWnd.GetPane(0, 1));
+	pView->m_eToolID = MAPTOOL::OBJECT;
+}
+
+
+void CMapTool::OnBnClickedLoad()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+}
+
+
+void CMapTool::OnCbnLayerSelchange()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+
+	int index = m_LayerList.GetCurSel();
+	CMainFrame* pMain = dynamic_cast<CMainFrame*>(::AfxGetApp()->GetMainWnd());
+	CMFCToolView* pView = dynamic_cast<CMFCToolView*>(pMain->m_MainSplitterWnd.GetPane(0, 1));
+	pView->m_pTerrain = m_pTerrainArr[index];
+
+	pView->SetScrollSizes(MM_TEXT, 
+		CSize(m_pTerrainArr[index]->m_iTileX * TILECX,
+			m_pTerrainArr[index]->m_iTileY * TILECY));
+
+}
+
+void CMapTool::OnCbnBackgroundSelchange()
+{
 }

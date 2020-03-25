@@ -37,6 +37,7 @@ BEGIN_MESSAGE_MAP(CMFCToolView, CScrollView)
 	ON_WM_LBUTTONDOWN()
 	ON_WM_MOUSEMOVE()
 	ON_WM_TIMER()
+	ON_WM_RBUTTONDOWN()
 END_MESSAGE_MAP()
 
 // CMFCToolView 생성/소멸
@@ -53,8 +54,6 @@ CMFCToolView::CMFCToolView()
 
 CMFCToolView::~CMFCToolView()
 {
-	Safe_Delete(m_pTerrain); 
-
 	GET_INSTANCE(CTextureMgr)->Destroy_Instance();
 	CDevice::Destroy_Instance(); 
 }
@@ -77,31 +76,10 @@ void CMFCToolView::OnDraw(CDC* pDC)
 	ASSERT_VALID(pDoc);
 	if (!pDoc)
 		return;
-	// 어떤거 ? ㅋㅋㅋ
 
-// 	const TEXINFO* pTexInfo = GET_INSTANCE(CTextureMgr)->Get_TexInfo(L"Terrain", L"Tile",2 );
-// 
-// 	float fCenterX = pTexInfo->tImageInfo.Width / 2.f; 
-// 	float fCenterY = pTexInfo->tImageInfo.Height * 0.5f; 
-// 
-// 	D3DXMATRIX matScale, matRotZ, matTrans, matWorld; 
-// 	D3DXMatrixScaling(&matScale, 1.f, 1.f, 0.f); 
-// 	D3DXMatrixRotationZ(&matRotZ, D3DXToRadian(m_fAngle));
-// 	D3DXMatrixTranslation(&matTrans, 400.f, 300.f, 0.f); 
-// 
-// 	matWorld = matScale * matRotZ * matTrans;
-// 	CDevice::Get_Instance()->Get_Sprite()->SetTransform(&matWorld);
-// 
-// 	CDevice::Get_Instance()->Render_Begin();
-// 	CDevice::Get_Instance()->Get_Sprite()->Draw(pTexInfo->pTexture,
-// 		nullptr,
-// 		&D3DXVECTOR3(fCenterX, fCenterY, 0.f),
-// 		nullptr,
-// 		D3DCOLOR_ARGB(255, 255, 255, 255));
-// 
-// 	CDevice::Get_Instance()->Render_End(); 
 	GET_INSTANCE(CDevice)->Render_Begin(); 
-	m_pTerrain->Render();
+	if(m_pTerrain)
+		m_pTerrain->Render();
 	GET_INSTANCE(CDevice)->Render_End(); 
 }
 
@@ -156,8 +134,8 @@ void CMFCToolView::OnInitialUpdate()
 	SetTimer(0, 0, nullptr); 
 	// SetScrollSizes 스크롤 설정하는 함수 - 1.스크롤 범위를 설정하는 인자. MM_TEXT픽셀단위로 계산하겠다. 
 	//2. 스크롤 전체 크기.  .
-	SetScrollSizes(MM_TEXT, CSize(TILECX * TILEX, TILEY * (TILECY / 2)));
-
+	SetScrollSizes(MM_TEXT, CSize(TILEX * TILECX, TILEY * TILECY));
+	
 	// TODO: 여기에 특수화된 코드를 추가 및/또는 기본 클래스를 호출합니다.
 	/*
 	지금 내가 하고자 하는 건. 
@@ -196,26 +174,16 @@ void CMFCToolView::OnInitialUpdate()
 	6. 정렬 순서 . 지금 넣어준 인자는 순서를 바꾸지 않겠다. 혹은 뭐 위치 지정 옵션이라던가 요런 것들 들어감. 
 	*/
 
-
 	g_hWND = m_hWnd; 
 	if (FAILED(GET_INSTANCE(CDevice)->InitDevice()))
 	{
 		AfxMessageBox(L"InitDevice Failed"); 
 		return; 
 	}
+
+	// CDevice->InitDevice 한 다음에 텍스쳐 넣어야 함!! **************************
 	GET_INSTANCE(CTextureMgr)->InsertTexture(CTextureMgr::SINGLETEX, L"../Texture/Cube.png", L"Cube");
-	//GET_INSTANCE(CTextureMgr)->InsertTexture(CTextureMgr::MULTITEX, L"../Texture/Stage/Terrain/Tile/Tile%d.png", L"Terrain", L"Tile", 38);
 	GET_INSTANCE(CTextureMgr)->InsertTexture(CTextureMgr::MULTITEX, L"../Texture/Stage/Terrain/Tile2/Tile%d.png", L"Terrain", L"Tile", 9);
-	if (nullptr == m_pTerrain)
-	{
-		m_pTerrain = new CTerrain; 
-		if (FAILED(m_pTerrain->Initialize()))
-		{
-			AfxMessageBox(L"Terrain Initialize Failed"); 
-			return; 
-		}
-		m_pTerrain->Set_View(this);
-	}
 }
 
 
@@ -259,6 +227,14 @@ void CMFCToolView::OnMouseMove(UINT nFlags, CPoint point)
 	case MAPTOOL::ID_END:
 		break;
 	}
+	
+	if (GetAsyncKeyState(VK_RBUTTON)) {
+		int x = GetScrollPos(0);
+		int y = GetScrollPos(1);
+		SetScrollPos(0, x + (m_tMouseOldPt.x-point.x));
+		SetScrollPos(1, y + (m_tMouseOldPt.y-point.y));
+		m_tMouseOldPt = point;
+	}
 
 	CScrollView::OnMouseMove(nFlags, point);
 }
@@ -272,4 +248,14 @@ void CMFCToolView::OnTimer(UINT_PTR nIDEvent)
 	CMiniView* pMiniView = dynamic_cast<CMiniView*>(pMain->m_SecondSplitterWnd.GetPane(0, 0));
 	pMiniView->Invalidate(0);
 	CScrollView::OnTimer(nIDEvent);
+}
+
+
+void CMFCToolView::OnRButtonDown(UINT nFlags, CPoint point)
+{
+	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
+
+	m_tMouseOldPt = point;
+
+	CScrollView::OnRButtonDown(nFlags, point);
 }
