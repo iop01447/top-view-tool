@@ -137,8 +137,8 @@ void CMFCToolView::OnInitialUpdate()
 	SetTimer(0, 0, nullptr); 
 	// SetScrollSizes 스크롤 설정하는 함수 - 1.스크롤 범위를 설정하는 인자. MM_TEXT픽셀단위로 계산하겠다. 
 	//2. 스크롤 전체 크기.  .
-	SetScrollSizes(MM_TEXT, CSize(TILEX * TILECX, TILEY * TILECY));
-	
+	SetScrollSizes(MM_TEXT, CSize(TILEX * TILECX + OFFSET * 2, TILEY * TILECY + OFFSET * 2));
+
 	// TODO: 여기에 특수화된 코드를 추가 및/또는 기본 클래스를 호출합니다.
 	/*
 	지금 내가 하고자 하는 건. 
@@ -249,6 +249,7 @@ void CMFCToolView::OnMouseMove(UINT nFlags, CPoint point)
 		SetScrollPos(0, x + (m_tMouseOldPt.x-point.x));
 		SetScrollPos(1, y + (m_tMouseOldPt.y-point.y));
 		m_tMouseOldPt = point;
+		//ScrollToPosition(point); // 이상
 	}
 
 	CScrollView::OnMouseMove(nFlags, point);

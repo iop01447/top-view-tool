@@ -146,7 +146,7 @@ void CTerrain::Render()
 		//GetScrollPos - 스크롤 얻어오는 함수. 0일경우 x , 1일경우 y 
 
 		D3DXMatrixScaling(&matScale, pTile->vSize.x, pTile->vSize.y, 0.f); 
-		D3DXMatrixTranslation(&matTrans, pTile->vPos.x - m_pView->GetScrollPos(0), pTile->vPos.y - m_pView->GetScrollPos(1), 0.f);
+		D3DXMatrixTranslation(&matTrans, OFFSET + pTile->vPos.x - m_pView->GetScrollPos(0), OFFSET + pTile->vPos.y - m_pView->GetScrollPos(1), 0.f);
 		matWorld = matScale * matTrans; 
 		SetRatio(&matWorld, fX, fY);
 		// 크, 자, 이, 공, 부 
