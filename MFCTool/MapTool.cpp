@@ -31,6 +31,13 @@ void CMapTool::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_LIST1, m_ListBox);
 	DDX_Control(pDX, IDC_PICTURE, m_Picture);
 	DDX_Control(pDX, IDC_COMBO_TEST, m_cbTest);
+
+	m_cbTest.InsertString(0, L"1번째");
+	m_cbTest.InsertString(1, L"2번째");
+	m_cbTest.InsertString(2, L"3번째");
+
+
+	m_cbTest.SetCurSel(0);
 }
 
 
@@ -183,20 +190,29 @@ void CMapTool::OnBnClickedSave()
 void CMapTool::OnCbnSelchangeComboTest()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	UpdateData(TRUE);
-	m_cbTest.InsertString(0, L"1번째");
-	m_cbTest.InsertString(1, L"2번째");
-	m_cbTest.InsertString(2, L"3번째");
 
-	m_cbTest.SetCurSel(0);
-	int iSel = m_cbTest.GetCurSel();
+	int iIndex;
+	iIndex = m_cbTest.GetCurSel();
 
-	m_cbTest.ShowWindow(iSel);
-
-	if (CB_ERR != iSel)
+	if (CB_ERR != iIndex)
 	{
-		CString sSel;
-		m_cbTest.GetLBText(iSel, sSel);
+		CString sName;
+		m_cbTest.GetLBText(iIndex, sName);
+		SetDlgItemText(IDC_COMBO_TEST, sName);
+
+		if (sName == L"1번째")
+		{
+			//원하는 명령1
+		}
+		else if (sName == L"2번째")
+		{
+			//2
+		}
+		else
+		{
+			//3
+		}
 	}
-	UpdateData(FALSE);
+
+
 }
