@@ -188,6 +188,16 @@ void CMFCToolView::OnInitialUpdate()
 	// CDevice->InitDevice 한 다음에 텍스쳐 넣어야 함!! **************************
 	GET_INSTANCE(CTextureMgr)->InsertTexture(CTextureMgr::SINGLETEX, L"../Texture/Cube.png", L"Cube");
 	GET_INSTANCE(CTextureMgr)->InsertTexture(CTextureMgr::MULTITEX, L"../Texture/Stage/Terrain/Tile2/Tile%d.png", L"Terrain", L"Tile", 9);
+
+	if (nullptr == m_pLine)
+	{
+		m_pLine = new CLine;
+		if (FAILED(m_pLine->Initialize())) {
+			AfxMessageBox(L"Line Initialize Failed");
+			return;
+		}
+		m_pLine->Set_View(this);
+	}
 }
 
 
