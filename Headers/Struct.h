@@ -26,6 +26,13 @@ typedef struct tagTile
 	BYTE		byDrawID; 
 	BYTE		byOption;
 }TILE;
+typedef struct tagLine
+{
+	D3DXVECTOR3 vLPos;
+	D3DXVECTOR3 vRPos;
+	BYTE		byOption;
+}LINE;
+
 typedef struct tagUnitInfo
 {
 	tagUnitInfo() 

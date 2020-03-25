@@ -18,7 +18,8 @@
 #include "MyForm.h"
 #include "TileTool.h"
 #include "ObjectTool.h"
-
+#include "LineTool.h"
+#include "Line.h"
 HWND g_hWND; 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -43,7 +44,7 @@ END_MESSAGE_MAP()
 // CMFCToolView 생성/소멸
 
 CMFCToolView::CMFCToolView()
-	:m_pTerrain(nullptr)
+	:m_pTerrain(nullptr),m_pLine(nullptr)
 {
 	// TODO: 여기에 생성 코드를 추가합니다.
 	m_fAngle = 0.f;
@@ -54,6 +55,8 @@ CMFCToolView::CMFCToolView()
 
 CMFCToolView::~CMFCToolView()
 {
+	Safe_Delete(m_pTerrain); 
+	Safe_Delete(m_pLine);
 	GET_INSTANCE(CTextureMgr)->Destroy_Instance();
 	CDevice::Destroy_Instance(); 
 }
@@ -80,6 +83,7 @@ void CMFCToolView::OnDraw(CDC* pDC)
 	GET_INSTANCE(CDevice)->Render_Begin(); 
 	if(m_pTerrain)
 		m_pTerrain->Render();
+	m_pLine->GridRender();
 	GET_INSTANCE(CDevice)->Render_End(); 
 }
 
@@ -201,6 +205,7 @@ void CMFCToolView::OnLButtonDown(UINT nFlags, CPoint point)
 		MapTool.m_pObjectTool->ViewLButtonDown(nFlags, point);
 		break;
 	case MAPTOOL::LINE:
+		MapTool.m_pLineTool->ViewLButtonDown(nFlags, point);
 		break;
 	case MAPTOOL::ID_END:
 		break;
@@ -223,6 +228,7 @@ void CMFCToolView::OnMouseMove(UINT nFlags, CPoint point)
 		MapTool.m_pObjectTool->ViewMouseMove(nFlags, point);
 		break;
 	case MAPTOOL::LINE:
+		MapTool.m_pLineTool->ViewMouseMove(nFlags, point);
 		break;
 	case MAPTOOL::ID_END:
 		break;

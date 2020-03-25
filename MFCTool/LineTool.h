@@ -20,4 +20,10 @@ protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 지원입니다.
 
 	DECLARE_MESSAGE_MAP()
+public:
+	afx_msg void OnBnClickedGrid();
+
+public:
+	void ViewLButtonDown(UINT nFlags, CPoint point);
+	void ViewMouseMove(UINT nFlags, CPoint point);
 };

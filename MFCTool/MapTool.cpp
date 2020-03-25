@@ -12,6 +12,7 @@
 #include "Terrain.h"
 #include "TileTool.h"
 #include "ObjectTool.h"
+#include "LineTool.h"
 
 // CMapTool 대화 상자입니다.
 
@@ -52,6 +53,7 @@ BEGIN_MESSAGE_MAP(CMapTool, CDialog)
 	ON_BN_CLICKED(IDC_BUTTON7, &CMapTool::OnBnClickedButtonObjectTool)
 	ON_BN_CLICKED(IDC_BUTTON6, &CMapTool::OnBnClickedLoad)
 	ON_CBN_SELCHANGE(IDC_COMBO_BACK_GRUND, &CMapTool::OnCbnBackgroundSelchange)
+	ON_BN_CLICKED(IDC_BUTTON3, &CMapTool::OnBnClickedLineTool)
 END_MESSAGE_MAP()
 
 
@@ -190,7 +192,7 @@ BOOL CMapTool::OnInitDialog()
 
 	m_pTileTool = new CTileTool;
 	m_pObjectTool = new CObjectTool;
-
+	m_pLineTool = new CLineTool;
 	if (m_pTileTool->GetSafeHwnd() == nullptr)
 		m_pTileTool->Create(IDD_TILETOOL);
 	if (m_pObjectTool->GetSafeHwnd() == nullptr)
@@ -199,6 +201,8 @@ BOOL CMapTool::OnInitDialog()
 	Init_Terrain();
 	Init_Background();
 
+	if (m_pLineTool->GetSafeHwnd() == nullptr)
+		m_pLineTool->Create(IDD_LINETOOL);
 	return TRUE;  // return TRUE unless you set the focus to a control
 				  // 예외: OCX 속성 페이지는 FALSE를 반환해야 합니다.
 }
@@ -225,7 +229,15 @@ void CMapTool::OnBnClickedButtonObjectTool()
 	pView->m_eToolID = MAPTOOL::OBJECT;
 }
 
+void CMapTool::OnBnClickedLineTool()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	m_pLineTool->ShowWindow(SW_SHOW);
 
+	CMainFrame* pMain = dynamic_cast<CMainFrame*>(::AfxGetApp()->GetMainWnd());
+	CMFCToolView* pView = dynamic_cast<CMFCToolView*>(pMain->m_MainSplitterWnd.GetPane(0, 1));
+	pView->m_eToolID = MAPTOOL::LINE;
+}
 void CMapTool::OnBnClickedLoad()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
@@ -250,3 +262,5 @@ void CMapTool::OnCbnLayerSelchange()
 void CMapTool::OnCbnBackgroundSelchange()
 {
 }
+
+

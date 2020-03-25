@@ -7,6 +7,8 @@
 class CTerrain;
 class CTileTool;
 class CObjectTool;
+class CLineTool;
+
 class CMapTool : public CDialog
 {
 	DECLARE_DYNAMIC(CMapTool)
@@ -28,6 +30,7 @@ protected:
 public:
 	CTileTool* m_pTileTool;
 	CObjectTool* m_pObjectTool;
+	CLineTool* m_pLineTool;
 
 public:
 	CComboBox m_LayerList;
@@ -52,4 +55,6 @@ public:
 	
 	afx_msg void OnCbnLayerSelchange();
 	afx_msg void OnCbnBackgroundSelchange();
+
+	afx_msg void OnBnClickedLineTool();
 };
