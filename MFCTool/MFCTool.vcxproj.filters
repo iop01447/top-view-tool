@@ -52,11 +52,11 @@
     <Filter Include="05.FileInfo">
       <UniqueIdentifier>{7823d91e-390e-4db8-bc62-633f0995b1b4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01.View\FormView\TileTool">
-      <UniqueIdentifier>{22f1dda5-7ad8-44e5-bf1e-aafd912dd56f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.View\FormView\ObjectTool">
+    <Filter Include="01.View\FormView\MapTool\ObjectTool">
       <UniqueIdentifier>{a3bce656-0242-4108-9c7b-1c05fa04d46f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.View\FormView\MapTool\TileTool">
+      <UniqueIdentifier>{22f1dda5-7ad8-44e5-bf1e-aafd912dd56f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -113,10 +113,10 @@
       <Filter>04.Texture\MultiTex</Filter>
     </ClInclude>
     <ClInclude Include="TileTool.h">
-      <Filter>01.View\FormView\TileTool</Filter>
+      <Filter>01.View\FormView\MapTool\TileTool</Filter>
     </ClInclude>
     <ClInclude Include="ObjectTool.h">
-      <Filter>01.View\FormView\ObjectTool</Filter>
+      <Filter>01.View\FormView\MapTool\ObjectTool</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -167,10 +167,10 @@
     </ClCompile>
     <ClCompile Include="FileInfo.cpp" />
     <ClCompile Include="TileTool.cpp">
-      <Filter>01.View\FormView\TileTool</Filter>
+      <Filter>01.View\FormView\MapTool\TileTool</Filter>
     </ClCompile>
     <ClCompile Include="ObjectTool.cpp">
-      <Filter>01.View\FormView\ObjectTool</Filter>
+      <Filter>01.View\FormView\MapTool\ObjectTool</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
