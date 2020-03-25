@@ -11,11 +11,7 @@ class CMFCToolView : public CScrollView
 protected: // serialization에서만 만들어집니다.
 	CMFCToolView();
 	DECLARE_DYNCREATE(CMFCToolView)
-public:
-	CTerrain* m_pTerrain; 
-	float m_fAngle; 
-	int m_iColor; 
-	int m_iChangeSpeed; 
+
 // 특성입니다.
 public:
 	CMFCToolDoc* GetDocument() const;
@@ -40,11 +36,18 @@ public:
 	virtual void Dump(CDumpContext& dc) const;
 #endif
 
-protected:
-
 // 생성된 메시지 맵 함수
 protected:
 	DECLARE_MESSAGE_MAP()
+
+public:
+	CTerrain* m_pTerrain;
+	float m_fAngle;
+	int m_iColor;
+	int m_iChangeSpeed;
+
+	MAPTOOL::ID m_eToolID{ MAPTOOL::ID_END };
+
 public:
 	virtual void OnInitialUpdate();
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);

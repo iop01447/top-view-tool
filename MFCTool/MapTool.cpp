@@ -25,8 +25,8 @@ CMapTool::CMapTool(CWnd* pParent /*=NULL*/)
 
 CMapTool::~CMapTool()
 {
-	Safe_Delete(m_TileTool);
-	Safe_Delete(m_ObjectTool);
+	Safe_Delete(m_pTileTool);
+	Safe_Delete(m_pObjectTool);
 }
 
 void CMapTool::DoDataExchange(CDataExchange* pDX)
@@ -123,13 +123,13 @@ BOOL CMapTool::OnInitDialog()
 
 	// TODO:  여기에 추가 초기화 작업을 추가합니다.
 
-	m_TileTool = new CTileTool;
-	m_ObjectTool = new CObjectTool;
+	m_pTileTool = new CTileTool;
+	m_pObjectTool = new CObjectTool;
 
-	if (m_TileTool->GetSafeHwnd() == nullptr)
-		m_TileTool->Create(IDD_TILETOOL);
-	if (m_ObjectTool->GetSafeHwnd() == nullptr)
-		m_ObjectTool->Create(IDD_OBJECTTOOL);
+	if (m_pTileTool->GetSafeHwnd() == nullptr)
+		m_pTileTool->Create(IDD_TILETOOL);
+	if (m_pObjectTool->GetSafeHwnd() == nullptr)
+		m_pObjectTool->Create(IDD_OBJECTTOOL);
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 				  // 예외: OCX 속성 페이지는 FALSE를 반환해야 합니다.
@@ -139,14 +139,22 @@ BOOL CMapTool::OnInitDialog()
 void CMapTool::OnBnClickedTileTool()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	m_TileTool->ShowWindow(SW_SHOW);
+	m_pTileTool->ShowWindow(SW_SHOW);
+
+	CMainFrame* pMain = dynamic_cast<CMainFrame*>(::AfxGetApp()->GetMainWnd());
+	CMFCToolView* pView = dynamic_cast<CMFCToolView*>(pMain->m_MainSplitterWnd.GetPane(0, 1));
+	pView->m_eToolID = MAPTOOL::TILE;
 }
 
 
 void CMapTool::OnBnClickedButtonObjectTool()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	m_ObjectTool->ShowWindow(SW_SHOW);
+	m_pObjectTool->ShowWindow(SW_SHOW);
+
+	CMainFrame* pMain = dynamic_cast<CMainFrame*>(::AfxGetApp()->GetMainWnd());
+	CMFCToolView* pView = dynamic_cast<CMFCToolView*>(pMain->m_MainSplitterWnd.GetPane(0, 1));
+	pView->m_eToolID = MAPTOOL::OBJECT;
 }
 
 

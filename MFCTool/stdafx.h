@@ -51,6 +51,7 @@ using namespace std;
 #include "Extern.h"
 #include "Define.h"
 #include "Function.h"
+#include "Enum.h"
 
 #include "Device.h"
 #include "TextureMgr.h"

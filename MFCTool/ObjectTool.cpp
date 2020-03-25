@@ -26,6 +26,14 @@ void CObjectTool::DoDataExchange(CDataExchange* pDX)
 	CDialog::DoDataExchange(pDX);
 }
 
+void CObjectTool::ViewLButtonDown(UINT nFlags, CPoint point)
+{
+}
+
+void CObjectTool::ViewMouseMove(UINT nFlags, CPoint point)
+{
+}
+
 
 BEGIN_MESSAGE_MAP(CObjectTool, CDialog)
 END_MESSAGE_MAP()

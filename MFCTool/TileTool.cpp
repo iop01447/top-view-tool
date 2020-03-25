@@ -6,6 +6,10 @@
 #include "TileTool.h"
 #include "afxdialogex.h"
 #include "FileInfo.h"
+#include "MainFrm.h"
+#include "MyForm.h"
+#include "Terrain.h"
+#include "MFCToolView.h"
 
 
 // CTileTool 대화 상자입니다.
@@ -112,6 +116,29 @@ void CTileTool::OnDropFiles(HDROP hDropInfo)
 	}
 	HorizontalScroll();
 	UpdateData(FALSE); 
+}
+
+void CTileTool::ViewLButtonDown(UINT nFlags, CPoint point)
+{
+	CMainFrame* pMainFrm = dynamic_cast<CMainFrame*>(AfxGetApp()->GetMainWnd());
+	CMyForm* pMyForm = dynamic_cast<CMyForm*>(pMainFrm->m_SecondSplitterWnd.GetPane(1, 0));
+	CTileTool* pTileTool = pMyForm->m_MapTool.m_pTileTool;
+	CMFCToolView* pView = dynamic_cast<CMFCToolView*>(pMainFrm->m_MainSplitterWnd.GetPane(0, 1));
+
+	D3DXVECTOR3 vMouse = { float(point.x + GetScrollPos(0)), float(point.y + GetScrollPos(1)), 0.f };
+	pView->m_pTerrain->TileChange(vMouse, BYTE(pTileTool->m_dwDrawID));
+}
+
+void CTileTool::ViewMouseMove(UINT nFlags, CPoint point)
+{
+	CMainFrame* pMainFrm = dynamic_cast<CMainFrame*>(AfxGetApp()->GetMainWnd());
+	D3DXVECTOR3 vMouse = { float(point.x + GetScrollPos(0)), float(point.y + GetScrollPos(1)), 0.f };
+	CMyForm* pMyForm = dynamic_cast<CMyForm*>(pMainFrm->m_SecondSplitterWnd.GetPane(1, 0));
+	CTileTool* pTileTool = pMyForm->m_MapTool.m_pTileTool;
+	CMFCToolView* pView = dynamic_cast<CMFCToolView*>(pMainFrm->m_MainSplitterWnd.GetPane(0, 1));
+
+	if (GetAsyncKeyState(VK_LBUTTON) && GetAsyncKeyState('Z'))
+		pView->m_pTerrain->TileChange(vMouse, BYTE(pTileTool->m_dwDrawID));
 }
 
 

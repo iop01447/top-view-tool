@@ -25,8 +25,8 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 public:
-	CTileTool* m_TileTool;
-	CObjectTool* m_ObjectTool;
+	CTileTool* m_pTileTool;
+	CObjectTool* m_pObjectTool;
 
 public:
 	CComboBox m_cbTest;

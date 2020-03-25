@@ -32,4 +32,7 @@ public:
 public:
 	afx_msg void OnLbnSelchangeTileList();
 	afx_msg void OnDropFiles(HDROP hDropInfo);
+
+	void ViewLButtonDown(UINT nFlags, CPoint point);
+	void ViewMouseMove(UINT nFlags, CPoint point);
 };

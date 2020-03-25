@@ -17,6 +17,8 @@
 #include "MiniView.h"
 #include "MyForm.h"
 #include "TileTool.h"
+#include "ObjectTool.h"
+
 HWND g_hWND; 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -220,18 +222,21 @@ void CMFCToolView::OnInitialUpdate()
 void CMFCToolView::OnLButtonDown(UINT nFlags, CPoint point)
 {
 	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
-
 	CMainFrame* pMainFrm = dynamic_cast<CMainFrame*>(AfxGetApp()->GetMainWnd());
-	CMyForm* pMyForm = dynamic_cast<CMyForm*>(pMainFrm->m_SecondSplitterWnd.GetPane(1, 0));
-	CTileTool* pTileTool = pMyForm->m_MapTool.m_TileTool;
-	D3DXVECTOR3 vMouse = { float(point.x + GetScrollPos(0)), float(point.y + GetScrollPos(1)), 0.f };
-	m_pTerrain->TileChange(vMouse, BYTE(pTileTool->m_dwDrawID));
-	//InvalidateRect(nullptr, true);
-	//Invalidate(0);
-
-// 	CMainFrame* pMain = dynamic_cast<CMainFrame*>(AfxGetApp()->GetMainWnd());
-// 	CMiniView* pMiniView = dynamic_cast<CMiniView*>(pMain->m_SecondSplitterWnd.GetPane(0, 0)); 
-// 	pMiniView->Invalidate(0);
+	CMapTool& MapTool = dynamic_cast<CMyForm*>(pMainFrm->m_SecondSplitterWnd.GetPane(1, 0))->m_MapTool;
+	switch (m_eToolID)
+	{
+	case MAPTOOL::TILE:
+		MapTool.m_pTileTool->ViewLButtonDown(nFlags, point);
+		break;
+	case MAPTOOL::OBJECT:
+		MapTool.m_pObjectTool->ViewLButtonDown(nFlags, point);
+		break;
+	case MAPTOOL::LINE:
+		break;
+	case MAPTOOL::ID_END:
+		break;
+	}
 
 	CScrollView::OnLButtonDown(nFlags, point);
 }
@@ -239,15 +244,22 @@ void CMFCToolView::OnLButtonDown(UINT nFlags, CPoint point)
 
 void CMFCToolView::OnMouseMove(UINT nFlags, CPoint point)
 {
-	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
-	D3DXVECTOR3 vMouse = { float(point.x + GetScrollPos(0)), float(point.y + GetScrollPos(1)), 0.f };
 	CMainFrame* pMainFrm = dynamic_cast<CMainFrame*>(AfxGetApp()->GetMainWnd());
-	CMyForm* pMyForm = dynamic_cast<CMyForm*>(pMainFrm->m_SecondSplitterWnd.GetPane(1, 0));
-	CTileTool* pTileTool = pMyForm->m_MapTool.m_TileTool;
-	if (GetAsyncKeyState(VK_LBUTTON) && GetAsyncKeyState('Z'))
-		m_pTerrain->TileChange(vMouse, BYTE(pTileTool->m_dwDrawID));
+	CMapTool& MapTool = dynamic_cast<CMyForm*>(pMainFrm->m_SecondSplitterWnd.GetPane(1, 0))->m_MapTool;
+	switch (m_eToolID)
+	{
+	case MAPTOOL::TILE:
+		MapTool.m_pTileTool->ViewMouseMove(nFlags, point);
+		break;
+	case MAPTOOL::OBJECT:
+		MapTool.m_pObjectTool->ViewMouseMove(nFlags, point);
+		break;
+	case MAPTOOL::LINE:
+		break;
+	case MAPTOOL::ID_END:
+		break;
+	}
 
-	//Invalidate(0);
 	CScrollView::OnMouseMove(nFlags, point);
 }
 
@@ -261,11 +273,3 @@ void CMFCToolView::OnTimer(UINT_PTR nIDEvent)
 	pMiniView->Invalidate(0);
 	CScrollView::OnTimer(nIDEvent);
 }
-
-
-// 아니
-// 아닌데
-// ㅉㅉ 
-// 아니거든? 
-//ㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋ
-// 시른데
