@@ -25,12 +25,13 @@ public:
 	CListBox m_ListBox;
 	CStatic m_Picture;
 	DWORD m_dwDrawID; 
+	CComboBox m_cbTest;
+
 
 	afx_msg void OnLbnSelchangeListBox();
 	afx_msg void OnDropFiles(HDROP hDropInfo);
 	void HorizontalScroll();
 	afx_msg void OnBnClickedSave();
-	CComboBox m_cbTest;
 
 	afx_msg void OnCbnSelchangeComboTest();
 };
