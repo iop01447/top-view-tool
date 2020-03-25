@@ -162,6 +162,50 @@ void CMapTool::OnCbnSelchangeComboSelectField()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
 
-	int iIndex;
-	iIndex = m_Backgrundlist.GetCurSel();
+	//int iIndex;
+	//iIndex = m_Backgrundlist.GetCurSel();
+
+	CString tpath = _T("폴더 경로/*.*");
+
+	//검색 클래스
+	CFileFind finder;
+
+	//CFileFind는 파일, 디렉터리가 존재하면 TRUE 를 반환함
+	BOOL bWorking = finder.FindFile(tpath); //
+
+	CString fileName;
+	CString DirName;
+
+	while (bWorking)
+	{
+		//다음 파일 / 폴더 가 존재하면다면 TRUE 반환
+		bWorking = finder.FindNextFile();
+		//파일 일때
+		if (finder.IsArchived())
+		{
+			//파일의 이름
+			CString _fileName = finder.GetFileName();
+
+			// 현재폴더 상위폴더 썸네일파일은 제외
+			if (_fileName == _T(".") ||
+				_fileName == _T("..") ||
+				_fileName == _T("Thumbs.db")) continue;
+
+			fileName = finder.GetFileTitle();
+			m_Backgrundlist.AddString(fileName);
+			//읽어온 파일 이름을 리스트박스에 넣음
+		}
+		// 디렉터리 일때
+		//if (finder.IsDirectory())
+		//{
+		// 필요하면 여기서 처리
+		//DirName = finder.GetFileName();
+		//}
+	}
+	//return TRUE;
+
+
+
+
+
 }
