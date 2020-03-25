@@ -30,6 +30,8 @@ public:
 
 public:
 	CComboBox m_cbTest;
+	CComboBox m_Backgrundlist;
+
 
 public:
 	virtual BOOL OnInitDialog();
@@ -41,4 +43,5 @@ public:
 
 	afx_msg void OnBnClickedSave();
 	afx_msg void OnBnClickedButtonLoad();
+	afx_msg void OnCbnSelchangeComboSelectField();
 };
