@@ -16,6 +16,7 @@
 #include "MainFrm.h"
 #include "MiniView.h"
 #include "MyForm.h"
+#include "TileTool.h"
 HWND g_hWND; 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -222,9 +223,9 @@ void CMFCToolView::OnLButtonDown(UINT nFlags, CPoint point)
 
 	CMainFrame* pMainFrm = dynamic_cast<CMainFrame*>(AfxGetApp()->GetMainWnd());
 	CMyForm* pMyForm = dynamic_cast<CMyForm*>(pMainFrm->m_SecondSplitterWnd.GetPane(1, 0));
-	CMapTool* pMapTool = &(pMyForm->m_MapTool);
+	CTileTool* pTileTool = pMyForm->m_MapTool.m_TileTool;
 	D3DXVECTOR3 vMouse = { float(point.x + GetScrollPos(0)), float(point.y + GetScrollPos(1)), 0.f };
-	m_pTerrain->TileChange(vMouse, BYTE(pMapTool->m_dwDrawID));
+	m_pTerrain->TileChange(vMouse, BYTE(pTileTool->m_dwDrawID));
 	//InvalidateRect(nullptr, true);
 	//Invalidate(0);
 
@@ -242,9 +243,9 @@ void CMFCToolView::OnMouseMove(UINT nFlags, CPoint point)
 	D3DXVECTOR3 vMouse = { float(point.x + GetScrollPos(0)), float(point.y + GetScrollPos(1)), 0.f };
 	CMainFrame* pMainFrm = dynamic_cast<CMainFrame*>(AfxGetApp()->GetMainWnd());
 	CMyForm* pMyForm = dynamic_cast<CMyForm*>(pMainFrm->m_SecondSplitterWnd.GetPane(1, 0));
-	CMapTool* pMapTool = &(pMyForm->m_MapTool);
+	CTileTool* pTileTool = pMyForm->m_MapTool.m_TileTool;
 	if (GetAsyncKeyState(VK_LBUTTON) && GetAsyncKeyState('Z'))
-		m_pTerrain->TileChange(vMouse, BYTE(pMapTool->m_dwDrawID));
+		m_pTerrain->TileChange(vMouse, BYTE(pTileTool->m_dwDrawID));
 
 	//Invalidate(0);
 	CScrollView::OnMouseMove(nFlags, point);

@@ -4,6 +4,8 @@
 
 // CMapTool 대화 상자입니다.
 
+class CTileTool;
+class CObjectTool;
 class CMapTool : public CDialog
 {
 	DECLARE_DYNAMIC(CMapTool)
@@ -21,17 +23,22 @@ protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 지원입니다.
 
 	DECLARE_MESSAGE_MAP()
+
 public:
-	CListBox m_ListBox;
-	CStatic m_Picture;
-	DWORD m_dwDrawID; 
+	CTileTool* m_TileTool;
+	CObjectTool* m_ObjectTool;
+
+public:
 	CComboBox m_cbTest;
 
+public:
+	virtual BOOL OnInitDialog();
 
-	afx_msg void OnLbnSelchangeListBox();
-	afx_msg void OnDropFiles(HDROP hDropInfo);
-	void HorizontalScroll();
-	afx_msg void OnBnClickedSave();
+	afx_msg void OnBnClickedTileTool();
+	afx_msg void OnBnClickedButtonObjectTool();
 
 	afx_msg void OnCbnSelchangeComboTest();
+
+	afx_msg void OnBnClickedSave();
+	afx_msg void OnBnClickedButtonLoad();
 };
