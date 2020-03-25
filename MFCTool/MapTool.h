@@ -6,6 +6,8 @@
 
 class CTileTool;
 class CObjectTool;
+class CLineTool;
+
 class CMapTool : public CDialog
 {
 	DECLARE_DYNAMIC(CMapTool)
@@ -27,6 +29,7 @@ protected:
 public:
 	CTileTool* m_pTileTool;
 	CObjectTool* m_pObjectTool;
+	CLineTool* m_pLineTool;
 
 public:
 	CComboBox m_cbTest;
@@ -44,4 +47,5 @@ public:
 	afx_msg void OnBnClickedSave();
 	afx_msg void OnBnClickedButtonLoad();
 	afx_msg void OnCbnSelchangeComboSelectField();
+	afx_msg void OnBnClickedLineTool();
 };

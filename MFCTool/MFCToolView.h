@@ -6,6 +6,7 @@
 
 class CMFCToolDoc; 
 class CTerrain; 
+class CLine;
 class CMFCToolView : public CScrollView
 {
 protected: // serialization에서만 만들어집니다.
@@ -45,6 +46,7 @@ public:
 	float m_fAngle;
 	int m_iColor;
 	int m_iChangeSpeed;
+	CLine* m_pLine;
 
 	MAPTOOL::ID m_eToolID{ MAPTOOL::ID_END };
 

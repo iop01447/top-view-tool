@@ -61,6 +61,9 @@
     <Filter Include="01.View\FormView\LineTool">
       <UniqueIdentifier>{8b669f01-966d-4621-a899-4c1ea7385020}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Line">
+      <UniqueIdentifier>{20925b99-476b-4530-b3bd-430dbca6d28a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MFCToolView.h">
@@ -124,6 +127,9 @@
     <ClInclude Include="LineTool.h">
       <Filter>01.View\FormView\LineTool</Filter>
     </ClInclude>
+    <ClInclude Include="Line.h">
+      <Filter>Line</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MFCToolView.cpp">
@@ -180,6 +186,9 @@
     </ClCompile>
     <ClCompile Include="LineTool.cpp">
       <Filter>01.View\FormView\LineTool</Filter>
+    </ClCompile>
+    <ClCompile Include="Line.cpp">
+      <Filter>Line</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
