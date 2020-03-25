@@ -55,7 +55,6 @@ CMFCToolView::CMFCToolView()
 
 CMFCToolView::~CMFCToolView()
 {
-	Safe_Delete(m_pTerrain); 
 	Safe_Delete(m_pLine);
 	GET_INSTANCE(CTextureMgr)->Destroy_Instance();
 	CDevice::Destroy_Instance(); 
