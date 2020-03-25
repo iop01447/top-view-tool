@@ -11,6 +11,7 @@
 #define IDD_MAPTOOL                     312
 #define IDD_TILETOOL                    313
 #define IDD_OBJECTTOOL                  314
+#define IDD_LINETOOL                    315
 #define IDC_BUTTON1                     1000
 #define IDC_EDIT1                       1001
 #define IDC_BUTTON6                     1001
@@ -45,9 +46,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        317
+#define _APS_NEXT_RESOURCE_VALUE        318
 #define _APS_NEXT_COMMAND_VALUE         32771
 #define _APS_NEXT_CONTROL_VALUE         1027
-#define _APS_NEXT_SYMED_VALUE           315
+#define _APS_NEXT_SYMED_VALUE           316
 #endif
 #endif
