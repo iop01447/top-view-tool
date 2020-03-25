@@ -7,7 +7,9 @@
 #include "FileInfo.h"
 #include <assert.h>
 #include "afxdialogex.h"
-
+#include "MainFrm.h"
+#include "MFCToolView.h"
+#include "Terrain.h"
 
 // CMapTool 대화 상자입니다.
 
@@ -28,12 +30,15 @@ void CMapTool::DoDataExchange(CDataExchange* pDX)
 	CDialog::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_LIST1, m_ListBox);
 	DDX_Control(pDX, IDC_PICTURE, m_Picture);
+	DDX_Control(pDX, IDC_COMBO_TEST, m_cbTest);
 }
 
 
 BEGIN_MESSAGE_MAP(CMapTool, CDialog)
 	ON_LBN_SELCHANGE(IDC_LIST1, &CMapTool::OnLbnSelchangeListBox)
 	ON_WM_DROPFILES()
+	ON_BN_CLICKED(IDC_BUTTON1, &CMapTool::OnBnClickedSave)
+	ON_CBN_SELCHANGE(IDC_COMBO_TEST, &CMapTool::OnCbnSelchangeComboTest)
 END_MESSAGE_MAP()
 
 
@@ -113,6 +118,8 @@ void CMapTool::OnDropFiles(HDROP hDropInfo)
 	UpdateData(FALSE); 
 }
 
+
+
 void CMapTool::HorizontalScroll()
 {
 	CString strFileName; 
@@ -137,4 +144,59 @@ void CMapTool::HorizontalScroll()
 		m_ListBox.SetHorizontalExtent(iCX);
 
 
+}
+
+
+void CMapTool::OnBnClickedSave()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	CFileDialog Dlg(FALSE, L"dat", L"*.dat", OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, L"DataFile|*.dat||", this);
+	TCHAR szPath[MAX_STR] = L"";
+	GetCurrentDirectory(MAX_STR, szPath);
+
+	PathRemoveFileSpec(szPath);
+	lstrcat(szPath, L"\\Data");
+	Dlg.m_ofn.lpstrInitialDir = szPath;
+
+	if (IDOK == Dlg.DoModal())
+	{
+		CString strPath = Dlg.GetPathName();
+
+		HANDLE hFile = CreateFile(strPath.GetString(), GENERIC_WRITE, 0, 0, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
+
+		if (INVALID_HANDLE_VALUE == hFile)
+			return;
+
+		CMainFrame* pMain = dynamic_cast<CMainFrame*>(::AfxGetApp()->GetMainWnd());
+		CMFCToolView* pView = dynamic_cast<CMFCToolView*>(pMain->m_MainSplitterWnd.GetPane(0, 1));
+		vector<TILE*>& rvecTerrain = pView->m_pTerrain->Get_Tile();
+
+		DWORD dwByte = 0;
+		for (auto& pTile : rvecTerrain)
+			WriteFile(hFile, pTile, sizeof(TILE), &dwByte, nullptr);
+
+		CloseHandle(hFile);
+	}
+}
+
+
+void CMapTool::OnCbnSelchangeComboTest()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	UpdateData(TRUE);
+	m_cbTest.InsertString(0, L"1번째");
+	m_cbTest.InsertString(1, L"2번째");
+	m_cbTest.InsertString(2, L"3번째");
+
+	m_cbTest.SetCurSel(0);
+	int iSel = m_cbTest.GetCurSel();
+
+	m_cbTest.ShowWindow(iSel);
+
+	if (CB_ERR != iSel)
+	{
+		CString sSel;
+		m_cbTest.GetLBText(iSel, sSel);
+	}
+	UpdateData(FALSE);
 }

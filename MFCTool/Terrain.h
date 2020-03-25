@@ -7,6 +7,7 @@ public:
 	~CTerrain();
 public:
 	void Set_View(CMFCToolView* pView) { m_pView = pView;  }
+	vector<TILE*>& Get_Tile() { return m_vecTile; }
 public:
 	void TileChange(const D3DXVECTOR3& rMouse, const BYTE& rbyDrawID, const BYTE& rbyOption =0);
 	int Get_Index(const D3DXVECTOR3& rPos); 

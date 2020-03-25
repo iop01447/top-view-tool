@@ -41,10 +41,10 @@ bool CTerrain::IsPicking(const D3DXVECTOR3 & rPos, const int & iIndex)
 	// 12, 3, 6, 9 순으로 마름모꼴 꼭지점 구하기. 
  	D3DXVECTOR3 vPoint[4] = 
  	{
- 		{m_vecTile[iIndex]->vPos.x , m_vecTile[iIndex]->vPos.y + (TILECY * 0.5f), 0.f},
- 		{m_vecTile[iIndex]->vPos.x + (TILECX * 0.5f), m_vecTile[iIndex]->vPos.y, 0.f},
- 		{ m_vecTile[iIndex]->vPos.x , m_vecTile[iIndex]->vPos.y - (TILECY * 0.5f), 0.f },
- 		{ m_vecTile[iIndex]->vPos.x - (TILECX * 0.5f), m_vecTile[iIndex]->vPos.y, 0.f }
+		{ m_vecTile[iIndex]->vPos.x - (TILECX * 0.5f), m_vecTile[iIndex]->vPos.y + (TILECY * 0.5f), 0.f },
+		{ m_vecTile[iIndex]->vPos.x + (TILECX * 0.5f), m_vecTile[iIndex]->vPos.y + (TILECY * 0.5f), 0.f },
+		{ m_vecTile[iIndex]->vPos.x + (TILECX * 0.5f) , m_vecTile[iIndex]->vPos.y - (TILECY * 0.5f), 0.f },
+		{ m_vecTile[iIndex]->vPos.x - (TILECX * 0.5f), m_vecTile[iIndex]->vPos.y - (TILECY * 0.5f), 0.f }
  	};
 	// 시계방향으로 각각 방향벡터 구할 것. 
 	D3DXVECTOR3 vDir[4] = 
@@ -156,13 +156,13 @@ HRESULT CTerrain::Initialize()
 	{
 		for (int j = 0 ; j < TILEX ; ++j)
 		{
-			fX = float((j * TILECX) + ((i % 2) * (TILECX >> 1)));
-			fY = float(i * (TILECY >> 1));
-			pTile = new TILE; 
+			fX = float((j * TILECX) + (TILECX >> 1));
+			fY = float((i * TILECY) + (TILECY >> 1));
+			pTile = new TILE;
 			pTile->vPos = { fX, fY, 0.f };
-			pTile->vSize = { 1.f, 1.f, 0.f }; 
-			pTile->byDrawID = 23; 
-			pTile->byOption = 0; 
+			pTile->vSize = { 1.f, 1.f, 0.f };
+			pTile->byDrawID = 0;
+			pTile->byOption = 0;
 			m_vecTile.emplace_back(pTile);
 		}
 	}
@@ -179,7 +179,6 @@ void CTerrain::Render()
 	float fY = WINCY / float(rc.bottom - rc.top);
 	int iIndex = 0; 
 	TCHAR szBuf[64] = L""; 
-	m_vecTile[30]->byDrawID = 2;
 	for (auto& pTile : m_vecTile)
 	{
 		swprintf_s(szBuf, L"%d", iIndex);
@@ -226,7 +225,7 @@ void CTerrain::MiniRender()
 		D3DXMatrixTranslation(&matTrans, m_vecTile[i]->vPos.x - m_pView->GetScrollPos(0), m_vecTile[i]->vPos.y - m_pView->GetScrollPos(1), 0.f); 
 		matWorld = matScale * matTrans; 
 
-		SetRatio(&matWorld, 0.2f, 0.6f);
+		SetRatio(&matWorld, 1.f, 1.f);
 
 		GET_INSTANCE(CDevice)->Get_Sprite()->SetTransform(&matWorld); 
 		GET_INSTANCE(CDevice)->Get_Sprite()->Draw(pTexInfo->pTexture, nullptr, &D3DXVECTOR3(fCenterX, fCenterY, 0.f), nullptr, D3DCOLOR_ARGB(255, 255, 255, 255));

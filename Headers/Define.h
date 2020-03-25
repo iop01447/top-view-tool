@@ -6,10 +6,10 @@
 
 #define WINCX 800
 #define WINCY 600
-#define TILECX 130
-#define TILECY 68
-#define TILEX 30
-#define TILEY 20
+#define TILECX 32
+#define TILECY 32
+#define TILEX 25
+#define TILEY 18
 
 #define SWORD	0x01
 #define AXE		0x02

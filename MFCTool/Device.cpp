@@ -104,9 +104,9 @@ HRESULT CDevice::InitDevice()
 	// 생성할 폰트에 대한 정보를 갖는 구조체. 
 	D3DXFONT_DESCW tFontInfo; 
 	ZeroMemory(&tFontInfo, sizeof(D3DXFONT_DESCW));
-	tFontInfo.Width = 10; 
-	tFontInfo.Height = 20; 
-	tFontInfo.Weight = FW_HEAVY; // 두껍게. 
+	tFontInfo.Width = 5; 
+	tFontInfo.Height = 10; 
+	tFontInfo.Weight = FW_NORMAL; // 두껍게. 
 	tFontInfo.CharSet = HANGEUL_CHARSET;
 	lstrcpy(tFontInfo.FaceName, L"궁서");
 	// D3DXCreateFontIndirect - 폰트 구조체 정보를 토대로 폰트 객체를 생성하는 함수. 

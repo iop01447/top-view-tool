@@ -201,8 +201,8 @@ void CMFCToolView::OnInitialUpdate()
 		return; 
 	}
 	GET_INSTANCE(CTextureMgr)->InsertTexture(CTextureMgr::SINGLETEX, L"../Texture/Cube.png", L"Cube");
-	GET_INSTANCE(CTextureMgr)->InsertTexture(CTextureMgr::MULTITEX, L"../Texture/Stage/Terrain/Tile/Tile%d.png", L"Terrain", L"Tile", 38);
-
+	//GET_INSTANCE(CTextureMgr)->InsertTexture(CTextureMgr::MULTITEX, L"../Texture/Stage/Terrain/Tile/Tile%d.png", L"Terrain", L"Tile", 38);
+	GET_INSTANCE(CTextureMgr)->InsertTexture(CTextureMgr::MULTITEX, L"../Texture/Stage/Terrain/Tile2/Tile%d.png", L"Terrain", L"Tile", 9);
 	if (nullptr == m_pTerrain)
 	{
 		m_pTerrain = new CTerrain; 
@@ -240,8 +240,11 @@ void CMFCToolView::OnMouseMove(UINT nFlags, CPoint point)
 {
 	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
 	D3DXVECTOR3 vMouse = { float(point.x + GetScrollPos(0)), float(point.y + GetScrollPos(1)), 0.f };
-	if (GetAsyncKeyState(VK_LBUTTON))
-		m_pTerrain->TileChange(vMouse, 20);
+	CMainFrame* pMainFrm = dynamic_cast<CMainFrame*>(AfxGetApp()->GetMainWnd());
+	CMyForm* pMyForm = dynamic_cast<CMyForm*>(pMainFrm->m_SecondSplitterWnd.GetPane(1, 0));
+	CMapTool* pMapTool = &(pMyForm->m_MapTool);
+	if (GetAsyncKeyState(VK_LBUTTON) && GetAsyncKeyState('Z'))
+		m_pTerrain->TileChange(vMouse, BYTE(pMapTool->m_dwDrawID));
 
 	//Invalidate(0);
 	CScrollView::OnMouseMove(nFlags, point);
