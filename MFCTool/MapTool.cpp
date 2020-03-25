@@ -27,17 +27,16 @@ CMapTool::~CMapTool()
 
 void CMapTool::DoDataExchange(CDataExchange* pDX)
 {
-	/*CDialog::DoDataExchange(pDX);
-	DDX_Control(pDX, IDC_LIST1, m_ListBox);
-	DDX_Control(pDX, IDC_PICTURE, m_Picture);
-	DDX_Control(pDX, IDC_COMBO_TEST, m_cbTest);*/
+	CDialog::DoDataExchange(pDX);
+//	DDX_Control(pDX, IDC_LIST1, m_ListBox);
+//	DDX_Control(pDX, IDC_PICTURE, m_Picture);
+	DDX_Control(pDX, IDC_COMBO_TEST, m_cbTest);
 
-	/*m_cbTest.InsertString(0, L"1번째");
+	m_cbTest.InsertString(0, L"1번째");
 	m_cbTest.InsertString(1, L"2번째");
 	m_cbTest.InsertString(2, L"3번째");
 
-
-	m_cbTest.SetCurSel(0);*/
+	m_cbTest.SetCurSel(0);
 }
 
 
