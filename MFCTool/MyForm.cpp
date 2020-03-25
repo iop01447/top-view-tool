@@ -55,8 +55,8 @@ void CMyForm::OnInitialUpdate()
 {
 	CFormView::OnInitialUpdate();
 
-	m_tFont.CreatePointFont(200, L"±Ã¼­");
-	GetDlgItem(IDC_BUTTON1)->SetFont(&m_tFont);
+//	m_tFont.CreatePointFont(200, L"±Ã¼­");
+//	GetDlgItem(IDC_BUTTON1)->SetFont(&m_tFont);
 
 	if (m_UnitTool.GetSafeHwnd() == nullptr)
 		m_UnitTool.Create(IDD_UNITTOOL);
