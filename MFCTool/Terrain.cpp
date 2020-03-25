@@ -78,53 +78,6 @@ bool CTerrain::IsPicking(const D3DXVECTOR3 & rPos, const int & iIndex)
 
 	}
 	return true; 
-// 	// 두가지 직선의 방정식을 이용한 방식
-// 	// 또하나는 내적을 이용하는 방식.
-// 	//y = ax + b; 
-// 	//0 = ax + b - y ;
-// 	//1번째 기울기 구하기!
-// 	// 일단 기울기 부터 구하자. 
-// 
-// 	float fInclination[4] =
-// 	{
-// 		(TILECY / 2.f) / (TILECX / 2.f),
-// 		-(TILECY / 2.f) / (TILECX / 2.f),
-// 		(TILECY / 2.f) / (TILECX / 2.f),
-// 		-(TILECY / 2.f) / (TILECX / 2.f)
-// 	};
-// 
-// 	// 2. 꼭지점 구하기. 
-// 	// 꼭지점은 12, 3, 6, 9 시 순으로 구할 것. 
-// 	D3DXVECTOR3 vPoint[4] = 
-// 	{
-// 		{m_vecTile[iIndex]->vPos.x , m_vecTile[iIndex]->vPos.y + (TILECY * 0.5f), 0.f},
-// 		{m_vecTile[iIndex]->vPos.x + (TILECX * 0.5f), m_vecTile[iIndex]->vPos.y, 0.f},
-// 		{ m_vecTile[iIndex]->vPos.x , m_vecTile[iIndex]->vPos.y - (TILECY * 0.5f), 0.f },
-// 		{ m_vecTile[iIndex]->vPos.x - (TILECX * 0.5f), m_vecTile[iIndex]->vPos.y, 0.f }
-// 	};
-// 
-// 	// y 절편 구하기. (b)
-// 	// y = ax + b; -> b = y - ax 
-// 	float fIntercept[4] = 
-// 	{
-// 		vPoint[0].y - (fInclination[0] * vPoint[0].x),
-// 		vPoint[1].y - (fInclination[1] * vPoint[1].x),
-// 		vPoint[2].y - (fInclination[2] * vPoint[2].x),
-// 		vPoint[3].y - (fInclination[3] * vPoint[3].x)
-// 	};
-// 	
-// 	//0 = ax + b - y ; 임의의 점 x y 에 이제 rPos 즉 마우스 좌표를 대입해서 
-// 	// 양수냐 음수냐를 비교하면. 
-// 	// 깔끔하게 픽킹 완료. 
-// 	if (0 < fInclination[0] * rPos.x + fIntercept[0] - rPos.y && // 첫번째 선에서는 양수
-// 		0 < fInclination[1] * rPos.x + fIntercept[1] - rPos.y && // 둘째 선에서도 양수 
-// 		0 > fInclination[2] * rPos.x + fIntercept[2] - rPos.y && // 셋째 선에서는 음수 
-// 		0 > fInclination[3] * rPos.x + fIntercept[3] - rPos.y) // 넷째 선에서는 음수.  이 4가지 조건이 모두 참이라면
-// 		// 이것은 마우스 포인트 위치가 마름모 꼴 안에 있다. 
-// 		return true;
-// 
-// 
-// 	return false;
 }
 
 void CTerrain::SetRatio(D3DXMATRIX * pOut, const float & fRatioX, const float & fRatioY)
@@ -134,7 +87,6 @@ void CTerrain::SetRatio(D3DXMATRIX * pOut, const float & fRatioX, const float & 
 	21	22	23	24
 	31	32	33	34
 	41	42	43	44
-
 	*/
 	pOut->_11 *= fRatioX;
 	pOut->_21 *= fRatioX;
@@ -225,10 +177,14 @@ void CTerrain::MiniRender()
 		float fCenterY = pTexInfo->tImageInfo.Height *0.5f; 
 
 		D3DXMatrixScaling(&matScale, m_vecTile[i]->vSize.x, m_vecTile[i]->vSize.y, 0.f); 
-		D3DXMatrixTranslation(&matTrans, m_vecTile[i]->vPos.x - m_pView->GetScrollPos(0), m_vecTile[i]->vPos.y - m_pView->GetScrollPos(1), 0.f); 
+		D3DXMatrixTranslation(&matTrans, m_vecTile[i]->vPos.x, m_vecTile[i]->vPos.y, 0.f); 
 		matWorld = matScale * matTrans; 
 
-		SetRatio(&matWorld, 1.f, 1.f);
+		float fScaleX = WINCX / float(m_iTileX * TILECX);
+		float fScaleY = WINCY / float(m_iTileY * TILECY);
+		float fMinScale = min(fScaleX, fScaleY);
+
+		SetRatio(&matWorld, fMinScale, fMinScale);
 
 		GET_INSTANCE(CDevice)->Get_Sprite()->SetTransform(&matWorld); 
 		GET_INSTANCE(CDevice)->Get_Sprite()->Draw(pTexInfo->pTexture, nullptr, &D3DXVECTOR3(fCenterX, fCenterY, 0.f), nullptr, D3DCOLOR_ARGB(255, 255, 255, 255));
@@ -239,23 +195,7 @@ void CTerrain::MiniRender()
 void CTerrain::Release()
 {
 	for_each(m_vecTile.begin(), m_vecTile.end(), Safe_Delete<TILE*>); 
-// 	for (auto& pTile : m_vecTile)
-// 	{
-// 		if (pTile)
-// 		{
-// 			delete pTile; 
-// 			pTile = nullptr; 
-// 		}
-// 	}
-	// ㅋㅋ 람다식이야. 신기하지 ? ㅋㅋㅋ
-// 	[&]() 
-// 	{
-// 		for (auto& pTile : m_vecTile)
-// 		{
-// 			Safe_Delete(pTile); 
-// 		}
-// 	}();
+
 	m_vecTile.clear(); 
-	//m_vecTile.swap(vector<TILE*>()); 
 	m_vecTile.shrink_to_fit();
 }
