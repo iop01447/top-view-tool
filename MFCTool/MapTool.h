@@ -26,6 +26,8 @@ public:
 	CStatic m_Picture;
 	DWORD m_dwDrawID; 
 	CComboBox m_cbTest;
+	CComboBox m_Backgrundlist;
+
 
 
 	afx_msg void OnLbnSelchangeListBox();
@@ -34,4 +36,5 @@ public:
 	afx_msg void OnBnClickedSave();
 
 	afx_msg void OnCbnSelchangeComboTest();
+	afx_msg void OnCbnSelchangeComboSelectField();
 };

@@ -28,8 +28,8 @@ CMapTool::~CMapTool()
 void CMapTool::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
-//	DDX_Control(pDX, IDC_LIST1, m_ListBox);
-//	DDX_Control(pDX, IDC_PICTURE, m_Picture);
+	//	DDX_Control(pDX, IDC_LIST1, m_ListBox);
+	//	DDX_Control(pDX, IDC_PICTURE, m_Picture);
 	DDX_Control(pDX, IDC_COMBO_TEST, m_cbTest);
 
 	m_cbTest.InsertString(0, L"1번째");
@@ -37,6 +37,7 @@ void CMapTool::DoDataExchange(CDataExchange* pDX)
 	m_cbTest.InsertString(2, L"3번째");
 
 	m_cbTest.SetCurSel(0);
+	DDX_Control(pDX, IDC_COMBO_BACK_GRUND, m_Backgrundlist);
 }
 
 
@@ -45,10 +46,12 @@ BEGIN_MESSAGE_MAP(CMapTool, CDialog)
 	ON_WM_DROPFILES()
 	ON_BN_CLICKED(IDC_BUTTON1, &CMapTool::OnBnClickedSave)
 	ON_CBN_SELCHANGE(IDC_COMBO_TEST, &CMapTool::OnCbnSelchangeComboTest)
+	ON_CBN_SELCHANGE(IDC_COMBO_BACK_GRUND, &CMapTool::OnCbnSelchangeComboSelectField)
 END_MESSAGE_MAP()
 
 
 // CMapTool 메시지 처리기입니다.
+
 
 
 void CMapTool::OnLbnSelchangeListBox()
@@ -214,4 +217,13 @@ void CMapTool::OnCbnSelchangeComboTest()
 	//}
 
 
+}
+
+
+void CMapTool::OnCbnSelchangeComboSelectField()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+
+	int iIndex;
+	iIndex = m_Backgrundlist.GetCurSel();
 }

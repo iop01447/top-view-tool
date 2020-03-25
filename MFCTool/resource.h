@@ -37,6 +37,7 @@
 #define IDC_PICTURE                     1021
 #define IDC_COMBO_TEST                  1022
 #define IDC_COMBO1                      1023
+#define IDC_COMBO_BACK_GRUND            1023
 #define IDC_MFCCOLORBUTTON1             1025
 #define IDC_COMBO3                      1026
 
