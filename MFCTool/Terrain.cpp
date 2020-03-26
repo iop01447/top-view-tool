@@ -152,7 +152,7 @@ void CTerrain::Render()
 		D3DXMatrixScaling(&matScale, pTile->vSize.x, pTile->vSize.y, 0.f); 
 		D3DXMatrixTranslation(&matTrans, OFFSET + pTile->vPos.x - m_pView->GetScrollPos(0), OFFSET + pTile->vPos.y - m_pView->GetScrollPos(1), 0.f);
 		matWorld = matScale * matTrans; 
-		SetRatio(&matWorld, fX, fY);
+		//SetRatio(&matWorld, fX, fY);
 		// 크, 자, 이, 공, 부 
 		GET_INSTANCE(CDevice)->Get_Sprite()->SetTransform(&matWorld);
 		GET_INSTANCE(CDevice)->Get_Sprite()->Draw(pTexInfo->pTexture, nullptr, &D3DXVECTOR3(fCenterX, fCenterY, 0.f), nullptr, D3DCOLOR_ARGB(255, 255, 255, 255));
@@ -175,7 +175,7 @@ void CTerrain::Render()
 			D3DXMatrixScaling(&matScale, fScaleX, fScaleY, 0.f);
 			D3DXMatrixTranslation(&matTrans, OFFSET + pTile->vPos.x - m_pView->GetScrollPos(0), OFFSET + pTile->vPos.y - m_pView->GetScrollPos(1), 0.f);
 			matWorld = matScale * matTrans;
-			SetRatio(&matWorld, fX, fY);
+			//SetRatio(&matWorld, fX, fY);
 
 			CMainFrame* pMainFrm = dynamic_cast<CMainFrame*>(AfxGetApp()->GetMainWnd());
 			CMyForm* pView = dynamic_cast<CMyForm*>(pMainFrm->m_SecondSplitterWnd.GetPane(1, 0));
