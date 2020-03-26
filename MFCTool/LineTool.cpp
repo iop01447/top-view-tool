@@ -7,6 +7,8 @@
 #include "afxdialogex.h"
 #include "MainFrm.h"
 #include "MFCToolView.h"
+#include "Device.h"
+#include "Terrain.h"
 // CLineTool 대화 상자입니다.
 
 IMPLEMENT_DYNAMIC(CLineTool, CDialog)
@@ -38,10 +40,11 @@ END_MESSAGE_MAP()
 void CLineTool::OnBnClickedGrid()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	//CMainFrame* pMain = dynamic_cast<CMainFrame*>(::AfxGetApp()->GetMainWnd());
-	//CMFCToolView* pView = dynamic_cast<CMFCToolView*>(pMain->m_MainSplitterWnd.GetPane(0, 1));
+	CMainFrame* pMain = dynamic_cast<CMainFrame*>(::AfxGetApp()->GetMainWnd());
+	CMFCToolView* pView = dynamic_cast<CMFCToolView*>(pMain->m_MainSplitterWnd.GetPane(0, 1));
 
 	bGrid = GET_INSTANCE(CDevice)->Get_GridChack();
+	CDevice::Get_Instance()->GridSet(pView->m_pTerrain->m_iTileX, pView->m_pTerrain->m_iTileY);
 
 	if (!bGrid)
 	{

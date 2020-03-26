@@ -267,6 +267,11 @@ void CDevice::Render_End(HWND hWnd /*= nullptr*/)
 void CDevice::GridSet(int iX, int iY)
 {
 	
+	for_each(m_vGrid.begin(), m_vGrid.end(), Safe_Delete<LINE*>);
+	m_vGrid.clear();
+	for_each(m_vGrid_Per.begin(), m_vGrid_Per.end(), Safe_Delete<LINE*>);
+	m_vGrid_Per.clear();
+
 	float fX = 0.f, fY = 0.f;
 	LINE* pLine = nullptr;
 	for (int i = 0; i < iY; ++i)
