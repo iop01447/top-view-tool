@@ -26,4 +26,7 @@ public:
 public:
 	void ViewLButtonDown(UINT nFlags, CPoint point);
 	void ViewMouseMove(UINT nFlags, CPoint point);
+
+public:
+	bool bGrid;
 };

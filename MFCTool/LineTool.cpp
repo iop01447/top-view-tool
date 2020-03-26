@@ -38,10 +38,21 @@ END_MESSAGE_MAP()
 void CLineTool::OnBnClickedGrid()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	CMainFrame* pMain = dynamic_cast<CMainFrame*>(::AfxGetApp()->GetMainWnd());
-	CMFCToolView* pView = dynamic_cast<CMFCToolView*>(pMain->m_MainSplitterWnd.GetPane(0, 1));
+	//CMainFrame* pMain = dynamic_cast<CMainFrame*>(::AfxGetApp()->GetMainWnd());
+	//CMFCToolView* pView = dynamic_cast<CMFCToolView*>(pMain->m_MainSplitterWnd.GetPane(0, 1));
 
-	//pView->m_pLine;
+	bGrid = GET_INSTANCE(CDevice)->Get_GridChack();
+
+	if (!bGrid)
+	{
+		GET_INSTANCE(CDevice)->Set_GridChack(TRUE);
+	}
+	else
+	{
+		GET_INSTANCE(CDevice)->Set_GridChack(FALSE);
+	}
+
+
 }
 
 void CLineTool::ViewLButtonDown(UINT nFlags, CPoint point)

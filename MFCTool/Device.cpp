@@ -9,6 +9,7 @@ CDevice::CDevice()
 	,m_pSprite(nullptr)
 	,m_pFont(nullptr)
 	,m_pLine(nullptr)
+	,bGridChack(false)
 {
 
 }
@@ -201,26 +202,28 @@ void CDevice::Render_End(HWND hWnd /*= nullptr*/)
 	{ D3DXVECTOR2(pView->GetScrollPos(0),pView->GetScrollPos(1)),
 		D3DXVECTOR2(pView->GetScrollPos(0),pView->GetScrollPos(1)) };
 
-
-	for (auto& iter : m_vGrid)
+	if (bGridChack)
 	{
-		
-		D3DXVECTOR2 LineS[2] = {
-			D3DXVECTOR2((*iter).vLine[0].x-Scroll[0].x,(*iter).vLine[0].y - Scroll[0].y),
-			D3DXVECTOR2((*iter).vLine[1].x - Scroll[1].x,(*iter).vLine[1].y - Scroll[1].y)
-		};
+		for (auto& iter : m_vGrid)
+		{
 
-		m_pLine->Draw(LineS, 2, D3DCOLOR_ARGB(255, 255, 255, 255));
-	}
-	for (auto& iter : m_vGrid_Per)
-	{
-		D3DXVECTOR2 LineS[2] = {
-			D3DXVECTOR2((*iter).vLine[0].x - Scroll[0].x,(*iter).vLine[0].y - Scroll[0].y),
-			D3DXVECTOR2((*iter).vLine[1].x - Scroll[1].x,(*iter).vLine[1].y - Scroll[1].y)
-		};
+			D3DXVECTOR2 LineS[2] = {
+				D3DXVECTOR2((*iter).vLine[0].x - Scroll[0].x,(*iter).vLine[0].y - Scroll[0].y),
+				D3DXVECTOR2((*iter).vLine[1].x - Scroll[1].x,(*iter).vLine[1].y - Scroll[1].y)
+			};
+
+			m_pLine->Draw(LineS, 2, D3DCOLOR_ARGB(255, 255, 255, 255));
+		}
+		for (auto& iter : m_vGrid_Per)
+		{
+			D3DXVECTOR2 LineS[2] = {
+				D3DXVECTOR2((*iter).vLine[0].x - Scroll[0].x,(*iter).vLine[0].y - Scroll[0].y),
+				D3DXVECTOR2((*iter).vLine[1].x - Scroll[1].x,(*iter).vLine[1].y - Scroll[1].y)
+			};
 
 
-		m_pLine->Draw(LineS, 2, D3DCOLOR_ARGB(255, 255, 255, 255));
+			m_pLine->Draw(LineS, 2, D3DCOLOR_ARGB(255, 255, 255, 255));
+		}
 	}
 
 	m_pLine->End();
@@ -234,15 +237,6 @@ void CDevice::Render_End(HWND hWnd /*= nullptr*/)
 	m_pDevice->Present(nullptr, nullptr, hWnd, nullptr);
 }
 
-void CDevice::Line_Render_Begin()
-{
-	m_pLine->Begin();
-}
-
-void CDevice::Line_Render_End(HWND hWnd)
-{
-	m_pLine->End();
-}
 
 void CDevice::GridSet()
 {

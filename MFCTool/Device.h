@@ -47,10 +47,8 @@ public:
 	void Render_Begin();
 	void Render_End(HWND hWnd = nullptr); 
 
-	void Line_Render_Begin();
-	void Line_Render_End(HWND hWnd = nullptr);
-
-
+	void Set_GridChack(bool chack) { bGridChack = chack; }
+	bool Get_GridChack() { return bGridChack; }
 	void GridSet();
 
 private:
@@ -72,6 +70,7 @@ private:
 
 	ID3DXLine* m_pLine;
 
+	bool bGridChack;
 
 	vector<LINE*> m_vGrid;
 	vector<LINE*> m_vGrid_Per;
