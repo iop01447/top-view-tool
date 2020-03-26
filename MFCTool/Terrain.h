@@ -22,6 +22,8 @@ private:
 	vector<TILE*> m_vecTile;
 	CMFCToolView* m_pView; 
 
+
+
 public:
 	int m_iTileX{ 0 };
 	int m_iTileY{ 0 };

@@ -104,7 +104,6 @@ HRESULT CTerrain::Initialize(int iTileX, int iTileY, BYTE byDrawID, E_TILE::OPTI
 {
 	m_iTileX = iTileX;
 	m_iTileY = iTileY;
-
 	float fX = 0.f, fY = 0.f; 
 	TILE* pTile = nullptr; 
 	for (int i = 0 ; i < iTileY; ++i)
@@ -155,6 +154,8 @@ void CTerrain::Render()
 
 		GET_INSTANCE(CDevice)->Get_Sprite()->SetTransform(&matWorld);
 		GET_INSTANCE(CDevice)->Get_Font()->DrawTextW(GET_INSTANCE(CDevice)->Get_Sprite(), szBuf, lstrlen(szBuf), nullptr, 0, D3DCOLOR_ARGB(255, 0,0,0));
+
+
 		++iIndex; 
 	}
 	// 2D에서 직교백터를 뽑아내는 방법. 

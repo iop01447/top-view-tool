@@ -1,13 +1,16 @@
 #include "stdafx.h"
 #include "Device.h"
-
+#include "MFCToolView.h"
+#include "MainFrm.h"
 CDevice* CDevice::m_pInstance = nullptr;
 CDevice::CDevice()
 	:m_p3D(nullptr)
 	,m_pDevice(nullptr)
 	,m_pSprite(nullptr)
 	,m_pFont(nullptr)
+	,m_pLine(nullptr)
 {
+
 }
 
 
@@ -116,6 +119,24 @@ HRESULT CDevice::InitDevice()
 		return E_FAIL; 
 	}
 
+
+
+
+	if (FAILED(D3DXCreateLine(m_pDevice, &m_pLine)))
+	{
+		AfxMessageBox(L"CreateLine Func Failed!");
+		return E_FAIL;
+	}
+
+
+	GridSet();
+
+
+
+
+	m_pLine->SetWidth(2); // 선굵기
+
+
 	return S_OK;
 }
 
@@ -134,6 +155,22 @@ void CDevice::Release()
 	if (m_p3D)
 		m_p3D->Release();
 
+	if (m_pLine)
+		m_pLine->Release();
+
+
+
+
+
+	for_each(m_vGrid.begin(), m_vGrid.end(), Safe_Delete<LINE*>);
+
+	m_vGrid.clear();
+	m_vGrid.shrink_to_fit();
+
+	for_each(m_vGrid_Per.begin(), m_vGrid_Per.end(), Safe_Delete<LINE*>);
+
+	m_vGrid_Per.clear();
+	m_vGrid_Per.shrink_to_fit();
 	// 순서 중요 ! 뎅글링 포인터를 방지하기 위해 레퍼런스 카운트 라는 기법을 사용하고 있음. 
 
 }
@@ -147,13 +184,48 @@ void CDevice::Render_Begin()
 	m_pDevice->BeginScene();
 	// 스프라이트 객체를 사용해서 그림을 그리겠다 라는 것을 넣어줘야 한다. 
 	m_pSprite->Begin(D3DXSPRITE_ALPHABLEND);
+
 }
 
 void CDevice::Render_End(HWND hWnd /*= nullptr*/)
 {
 	m_pSprite->End();
-	m_pDevice->EndScene(); 
 
+	m_pLine->Begin();
+	CMainFrame* pMain = dynamic_cast<CMainFrame*>(AfxGetApp()->GetMainWnd());
+	if (nullptr == pMain)
+		return;
+	CMFCToolView* pView = dynamic_cast<CMFCToolView*>(pMain->m_MainSplitterWnd.GetPane(0, 1));
+
+	D3DXVECTOR2 Scroll[2] =
+	{ D3DXVECTOR2(pView->GetScrollPos(0),pView->GetScrollPos(1)),
+		D3DXVECTOR2(pView->GetScrollPos(0),pView->GetScrollPos(1)) };
+
+
+	for (auto& iter : m_vGrid)
+	{
+		
+		D3DXVECTOR2 LineS[2] = {
+			D3DXVECTOR2((*iter).vLine[0].x-Scroll[0].x,(*iter).vLine[0].y - Scroll[0].y),
+			D3DXVECTOR2((*iter).vLine[1].x - Scroll[1].x,(*iter).vLine[1].y - Scroll[1].y)
+		};
+
+		m_pLine->Draw(LineS, 2, D3DCOLOR_ARGB(255, 255, 255, 255));
+	}
+	for (auto& iter : m_vGrid_Per)
+	{
+		D3DXVECTOR2 LineS[2] = {
+			D3DXVECTOR2((*iter).vLine[0].x - Scroll[0].x,(*iter).vLine[0].y - Scroll[0].y),
+			D3DXVECTOR2((*iter).vLine[1].x - Scroll[1].x,(*iter).vLine[1].y - Scroll[1].y)
+		};
+
+
+		m_pLine->Draw(LineS, 2, D3DCOLOR_ARGB(255, 255, 255, 255));
+	}
+
+	m_pLine->End();
+
+	m_pDevice->EndScene();
 	// 전면버퍼로 교체! 
 	// 3번째 인자를 기억하자. 
 	// 3번째 인자는 어느 윈도우창에 그릴 것인가. 
@@ -161,3 +233,51 @@ void CDevice::Render_End(HWND hWnd /*= nullptr*/)
 	// 만약 다른 윈도우 창에 그림을 그리고 싶다면!? 3번째 인자에 내가 그리고자 하는 윈도우 창의 핸들을 넣어주면 된다. 
 	m_pDevice->Present(nullptr, nullptr, hWnd, nullptr);
 }
+
+void CDevice::Line_Render_Begin()
+{
+	m_pLine->Begin();
+}
+
+void CDevice::Line_Render_End(HWND hWnd)
+{
+	m_pLine->End();
+}
+
+void CDevice::GridSet()
+{
+	
+	float fX = 0.f, fY = 0.f;
+	LINE* pLine = nullptr;
+	for (int i = 0; i < TILEY; ++i)
+	{
+		for (int j = 0; j < TILEX; ++j)
+		{
+
+			fX = float((j * TILECX))+OFFSET;
+			fY = float((i * TILECY))+ OFFSET;
+			pLine = new LINE;
+			pLine->vLine[0] = { fX,fY };
+			pLine->vLine[1] = {fX+ TILECX ,fY };
+			m_vGrid.emplace_back(pLine);
+		}
+
+	}
+	LINE* pLine_per = nullptr;
+	for (int i = 0; i < TILEY; ++i)
+	{
+		for (int j = 0; j < TILEX; ++j)
+		{
+			fX = float((j * TILECX)) + OFFSET;
+			fY = float((i * TILECY)) + OFFSET;
+			pLine_per = new LINE;
+			pLine_per->vLine[0] = { fX,fY };
+			pLine_per->vLine[1] = { fX  ,fY+ TILECY };
+			m_vGrid_Per.emplace_back(pLine_per);
+		}
+
+	}
+
+
+}
+

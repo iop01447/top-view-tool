@@ -44,7 +44,7 @@ END_MESSAGE_MAP()
 // CMFCToolView 생성/소멸
 
 CMFCToolView::CMFCToolView()
-	:m_pTerrain(nullptr),m_pLine(nullptr)
+	:m_pTerrain(nullptr)
 {
 	// TODO: 여기에 생성 코드를 추가합니다.
 	m_fAngle = 0.f;
@@ -55,7 +55,6 @@ CMFCToolView::CMFCToolView()
 
 CMFCToolView::~CMFCToolView()
 {
-	Safe_Delete(m_pLine);
 	GET_INSTANCE(CTextureMgr)->Destroy_Instance();
 	CDevice::Destroy_Instance(); 
 }
@@ -85,9 +84,10 @@ void CMFCToolView::OnDraw(CDC* pDC)
 
 	if(m_pTerrain) m_pTerrain->Render();
 
-	m_pLine->GridRender();
+
 	
 	GET_INSTANCE(CDevice)->Render_End(); 
+
 }
 
 
@@ -194,15 +194,9 @@ void CMFCToolView::OnInitialUpdate()
 	GET_INSTANCE(CTextureMgr)->InsertTexture(CTextureMgr::MULTITEX, L"../Texture/Stage/Background/%d.png", L"Background", L"Background", 2);
 	m_pBackgroundTex = CTextureMgr::Get_Instance()->Get_TexInfo(L"Background", L"Background", 0);
 
-	if (nullptr == m_pLine)
-	{
-		m_pLine = new CLine;
-		if (FAILED(m_pLine->Initialize())) {
-			AfxMessageBox(L"Line Initialize Failed");
-			return;
-		}
-		m_pLine->Set_View(this);
-	}
+
+
+
 }
 
 

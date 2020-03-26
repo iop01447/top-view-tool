@@ -46,11 +46,15 @@ public:
 	float m_fAngle;
 	int m_iColor;
 	int m_iChangeSpeed;
-	CLine* m_pLine;
+
+
+
 
 	MAPTOOL::ID m_eToolID{ MAPTOOL::ID_END };
 	CPoint m_tMouseOldPt;
 	TEXINFO* m_pBackgroundTex{ nullptr };
+
+
 
 public:
 	virtual void OnInitialUpdate();
