@@ -130,7 +130,7 @@ HRESULT CDevice::InitDevice()
 	}
 
 
-	GridSet();
+	GridSet(TILEX,TILEY);
 
 	pLineM = new LINE;
 
@@ -264,14 +264,14 @@ void CDevice::Render_End(HWND hWnd /*= nullptr*/)
 }
 
 
-void CDevice::GridSet()
+void CDevice::GridSet(int iX, int iY)
 {
 	
 	float fX = 0.f, fY = 0.f;
 	LINE* pLine = nullptr;
-	for (int i = 0; i < TILEY; ++i)
+	for (int i = 0; i < iY; ++i)
 	{
-		for (int j = 0; j < TILEX; ++j)
+		for (int j = 0; j < iX; ++j)
 		{
 
 			fX = float((j * TILECX))+OFFSET;
@@ -284,9 +284,9 @@ void CDevice::GridSet()
 
 	}
 	LINE* pLine_per = nullptr;
-	for (int i = 0; i < TILEY; ++i)
+	for (int i = 0; i < iY; ++i)
 	{
-		for (int j = 0; j < TILEX; ++j)
+		for (int j = 0; j < iX; ++j)
 		{
 			fX = float((j * TILECX)) + OFFSET;
 			fY = float((i * TILECY)) + OFFSET;

@@ -49,7 +49,7 @@ public:
 
 	void Set_GridChack(bool chack) { bGridChack = chack; }
 	bool Get_GridChack() { return bGridChack; }
-	void GridSet();
+	void GridSet(int iX,int iY);
 
 public:
 	void Line_Set(D3DXVECTOR2& rMouse);
