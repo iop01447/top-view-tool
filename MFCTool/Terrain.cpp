@@ -185,7 +185,7 @@ void CTerrain::Render()
 			GET_INSTANCE(CDevice)->Get_Sprite()->SetTransform(&matWorld);
 			GET_INSTANCE(CDevice)->Get_Sprite()->Draw(pTexInfo->pTexture,
 				nullptr, &D3DXVECTOR3(fCenterX, fCenterY, 0.f), nullptr, 
-				D3DCOLOR_ARGB(255, (int)color.r, (int)color.g, (int)color.b));
+				D3DCOLOR_ARGB(125, (int)color.r, (int)color.g, (int)color.b));
 		}
 
 		++iIndex; 
