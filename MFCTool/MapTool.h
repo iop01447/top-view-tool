@@ -48,8 +48,6 @@ public:
 	afx_msg void OnBnClickedTileTool();
 	afx_msg void OnBnClickedButtonObjectTool();
 
-	afx_msg void OnCbnSelchangeComboTest();
-
 	afx_msg void OnBnClickedSave();
 	afx_msg void OnBnClickedLoad();
 	

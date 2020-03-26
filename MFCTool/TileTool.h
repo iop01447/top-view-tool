@@ -1,8 +1,11 @@
 #pragma once
+#include "afxwin.h"
+#include "afxcolorbutton.h"
 
 
 // CTileTool 대화 상자입니다.
 
+class CMFCToolView;
 class CTileTool : public CDialog
 {
 	DECLARE_DYNAMIC(CTileTool)
@@ -25,9 +28,13 @@ public:
 	CListBox m_ListBox;
 	CStatic m_Picture;
 	DWORD m_dwDrawID;
+	BYTE m_byOptionID{ 0 };
+	CMFCToolView* m_pView;
 
 public:
 	void HorizontalScroll();
+	
+	void Init_TileList();
 
 public:
 	afx_msg void OnLbnSelchangeTileList();
@@ -38,5 +45,18 @@ public:
 
 	int m_iTileY;
 	int m_iTileX;
-	afx_msg void OnBnClickedTileCntChange();
+	afx_msg void OnBnClickedTileXYChange();
+
+	virtual BOOL OnInitDialog();
+
+	CComboBox m_TileOptionList;
+	map<int, D3DCOLORVALUE> m_mapTileOptionColor;
+
+	CMFCColorButton m_ColorButton;
+	afx_msg void OnCbnSelchangeTileOption();
+
+	afx_msg void OnBnClickedMfcColorButton();
+
+	CButton m_CheckTileOption;
+	afx_msg void OnBnClickedCheckTileOption();
 };

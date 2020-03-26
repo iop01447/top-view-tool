@@ -14,6 +14,9 @@ public:
 	bool IsPicking(const D3DXVECTOR3& rPos, const int& iIndex); 
 	void SetRatio(D3DXMATRIX* pOut, const float& fRatioX, const float& fRatioY);
 	void MiniRender();
+
+	void ChangeTileXY(int iTileX, int iTileY);
+
 public:
 	HRESULT Initialize(int iTileX, int iTileY, BYTE byDrawID, E_TILE::OPTION eOption);
 	void Render(); 
@@ -27,5 +30,7 @@ private:
 public:
 	int m_iTileX{ 0 };
 	int m_iTileY{ 0 };
+
+	bool m_bDrawOption{ false };
 };
 

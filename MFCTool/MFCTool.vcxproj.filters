@@ -64,6 +64,9 @@
     <Filter Include="Line">
       <UniqueIdentifier>{20925b99-476b-4530-b3bd-430dbca6d28a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="07.Object">
+      <UniqueIdentifier>{e6b88a8e-ed0d-4c11-97d7-41dfc76eabf3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MFCToolView.h">
@@ -132,6 +135,9 @@
     <ClInclude Include="Line.h">
       <Filter>Line</Filter>
     </ClInclude>
+    <ClInclude Include="Obj.h">
+      <Filter>07.Object</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MFCToolView.cpp">
@@ -193,6 +199,9 @@
     </ClCompile>
     <ClCompile Include="Line.cpp">
       <Filter>Line</Filter>
+    </ClCompile>
+    <ClCompile Include="Obj.cpp">
+      <Filter>07.Object</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
