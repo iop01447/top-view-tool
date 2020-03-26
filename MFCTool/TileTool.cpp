@@ -18,6 +18,8 @@ IMPLEMENT_DYNAMIC(CTileTool, CDialog)
 
 CTileTool::CTileTool(CWnd* pParent /*=NULL*/)
 	: CDialog(IDD_TILETOOL, pParent)
+	, m_iTileY(false)
+	, m_iTileX(0)
 {
 
 }
@@ -31,12 +33,15 @@ void CTileTool::DoDataExchange(CDataExchange* pDX)
 	CDialog::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_LIST1, m_ListBox);
 	DDX_Control(pDX, IDC_PICTURE, m_Picture);
+	DDX_Text(pDX, IDC_EDIT3, m_iTileY);
+	DDX_Text(pDX, IDC_EDIT4, m_iTileX);
 }
 
 
 BEGIN_MESSAGE_MAP(CTileTool, CDialog)
 	ON_LBN_SELCHANGE(IDC_LIST1, &CTileTool::OnLbnSelchangeTileList)
 	ON_WM_DROPFILES()
+	ON_BN_CLICKED(IDC_BUTTON1, &CTileTool::OnBnClickedTileCntChange)
 END_MESSAGE_MAP()
 
 
@@ -166,3 +171,16 @@ void CTileTool::HorizontalScroll()
 		m_ListBox.SetHorizontalExtent(iCX);
 }
 
+
+
+void CTileTool::OnBnClickedTileCntChange()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	UpdateData(TRUE);
+
+	/* // 잘 되는지 테스트 
+	int tmp = m_iTileX;
+	m_iTileX = m_iTileY;
+	m_iTileY = tmp;
+	UpdateData(FALSE); */
+}

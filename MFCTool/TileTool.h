@@ -35,4 +35,8 @@ public:
 
 	void ViewLButtonDown(UINT nFlags, CPoint point);
 	void ViewMouseMove(UINT nFlags, CPoint point);
+
+	int m_iTileY;
+	int m_iTileX;
+	afx_msg void OnBnClickedTileCntChange();
 };
