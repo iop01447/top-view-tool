@@ -206,6 +206,7 @@
     <ClInclude Include="MiniView.h" />
     <ClInclude Include="MultiTex.h" />
     <ClInclude Include="MyForm.h" />
+    <ClInclude Include="Obj.h" />
     <ClInclude Include="ObjectTool.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="SingleTex.h" />
@@ -230,6 +231,7 @@
     <ClCompile Include="MiniView.cpp" />
     <ClCompile Include="MultiTex.cpp" />
     <ClCompile Include="MyForm.cpp" />
+    <ClCompile Include="Obj.cpp" />
     <ClCompile Include="ObjectTool.cpp" />
     <ClCompile Include="SingleTex.cpp" />
     <ClCompile Include="stdafx.cpp">

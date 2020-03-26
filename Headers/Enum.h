@@ -13,5 +13,6 @@ namespace LAYER
 
 namespace E_TILE
 {
-	enum OPTION { OPTION_END };
+	enum OPTION { EMPTY, LAND, WATER, OPTION_END };
+	static const wstring str[] = { L"Ùí", L"¶¥", L"¹°" };
 }

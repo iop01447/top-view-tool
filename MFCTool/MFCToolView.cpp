@@ -20,6 +20,7 @@
 #include "ObjectTool.h"
 #include "LineTool.h"
 #include "Line.h"
+#include "Obj.h"
 HWND g_hWND; 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -58,6 +59,8 @@ CMFCToolView::~CMFCToolView()
 	Safe_Delete(m_pLine);
 	GET_INSTANCE(CTextureMgr)->Destroy_Instance();
 	CDevice::Destroy_Instance(); 
+
+	for_each(m_ObjList.begin(), m_ObjList.end(), Safe_Delete<CObj*>);
 }
 
 BOOL CMFCToolView::PreCreateWindow(CREATESTRUCT& cs)
@@ -85,7 +88,16 @@ void CMFCToolView::OnDraw(CDC* pDC)
 
 	if(m_pTerrain) m_pTerrain->Render();
 
+	if (m_eToolID == MAPTOOL::OBJECT) {
+		m_pMapTool->m_pObjectTool->DrawView();
+	}
+
+	for (auto& obj : m_ObjList) {
+		obj->Render(this);
+	}
+
 	//m_pLine->GridRender();
+
 	
 	GET_INSTANCE(CDevice)->Render_End(); 
 }
@@ -193,6 +205,8 @@ void CMFCToolView::OnInitialUpdate()
 	GET_INSTANCE(CTextureMgr)->InsertTexture(CTextureMgr::MULTITEX, L"../Texture/Stage/Terrain/Tile2/Tile%d.png", L"Terrain", L"Tile", 9);
 	GET_INSTANCE(CTextureMgr)->InsertTexture(CTextureMgr::MULTITEX, L"../Texture/Stage/Background/%d.png", L"Background", L"Background", 2);
 	m_pBackgroundTex = CTextureMgr::Get_Instance()->Get_TexInfo(L"Background", L"Background", 0);
+	CTextureMgr::Get_Instance()->InsertTexture(CTextureMgr::SINGLETEX, L"../Texture/white.png", L"White");
+	CTextureMgr::Get_Instance()->InsertTexture(CTextureMgr::MULTITEX, L"../Texture/Stage/Object/%d.png", L"Object", L"Object", 3);
 
 	if (nullptr == m_pLine)
 	{
@@ -203,24 +217,24 @@ void CMFCToolView::OnInitialUpdate()
 		}
 		m_pLine->Set_View(this);
 	}
+
+	m_pMapTool = &dynamic_cast<CMyForm*>(pMainFrame->m_SecondSplitterWnd.GetPane(1, 0))->m_MapTool;
 }
 
 
 void CMFCToolView::OnLButtonDown(UINT nFlags, CPoint point)
 {
 	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
-	CMainFrame* pMainFrm = dynamic_cast<CMainFrame*>(AfxGetApp()->GetMainWnd());
-	CMapTool& MapTool = dynamic_cast<CMyForm*>(pMainFrm->m_SecondSplitterWnd.GetPane(1, 0))->m_MapTool;
 	switch (m_eToolID)
 	{
 	case MAPTOOL::TILE:
-		MapTool.m_pTileTool->ViewLButtonDown(nFlags, point);
+		m_pMapTool->m_pTileTool->ViewLButtonDown(nFlags, point);
 		break;
 	case MAPTOOL::OBJECT:
-		MapTool.m_pObjectTool->ViewLButtonDown(nFlags, point);
+		m_pMapTool->m_pObjectTool->ViewLButtonDown(nFlags, point);
 		break;
 	case MAPTOOL::LINE:
-		MapTool.m_pLineTool->ViewLButtonDown(nFlags, point);
+		m_pMapTool->m_pLineTool->ViewLButtonDown(nFlags, point);
 		break;
 	case MAPTOOL::ID_END:
 		break;
@@ -232,18 +246,16 @@ void CMFCToolView::OnLButtonDown(UINT nFlags, CPoint point)
 
 void CMFCToolView::OnMouseMove(UINT nFlags, CPoint point)
 {
-	CMainFrame* pMainFrm = dynamic_cast<CMainFrame*>(AfxGetApp()->GetMainWnd());
-	CMapTool& MapTool = dynamic_cast<CMyForm*>(pMainFrm->m_SecondSplitterWnd.GetPane(1, 0))->m_MapTool;
 	switch (m_eToolID)
 	{
 	case MAPTOOL::TILE:
-		MapTool.m_pTileTool->ViewMouseMove(nFlags, point);
+		m_pMapTool->m_pTileTool->ViewMouseMove(nFlags, point);
 		break;
 	case MAPTOOL::OBJECT:
-		MapTool.m_pObjectTool->ViewMouseMove(nFlags, point);
+		m_pMapTool->m_pObjectTool->ViewMouseMove(nFlags, point);
 		break;
 	case MAPTOOL::LINE:
-		MapTool.m_pLineTool->ViewMouseMove(nFlags, point);
+		m_pMapTool->m_pLineTool->ViewMouseMove(nFlags, point);
 		break;
 	case MAPTOOL::ID_END:
 		break;

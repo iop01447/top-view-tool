@@ -28,5 +28,7 @@ private:
 public:
 	int m_iTileX{ 0 };
 	int m_iTileY{ 0 };
+
+	bool m_bDrawOption{ false };
 };
 

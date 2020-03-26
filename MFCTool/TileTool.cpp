@@ -35,6 +35,9 @@ void CTileTool::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_PICTURE, m_Picture);
 	DDX_Text(pDX, IDC_EDIT3, m_iTileY);
 	DDX_Text(pDX, IDC_EDIT4, m_iTileX);
+	DDX_Control(pDX, IDC_COMBO3, m_TileOptionList);
+	DDX_Control(pDX, IDC_MFCCOLORBUTTON1, m_ColorButton);
+	DDX_Control(pDX, IDC_CHECK2, m_CheckTileOption);
 }
 
 
@@ -42,6 +45,9 @@ BEGIN_MESSAGE_MAP(CTileTool, CDialog)
 	ON_LBN_SELCHANGE(IDC_LIST1, &CTileTool::OnLbnSelchangeTileList)
 	ON_WM_DROPFILES()
 	ON_BN_CLICKED(IDC_BUTTON1, &CTileTool::OnBnClickedTileXYChange)
+	ON_CBN_SELCHANGE(IDC_COMBO3, &CTileTool::OnCbnSelchangeTileOption)
+	ON_BN_CLICKED(IDC_MFCCOLORBUTTON1, &CTileTool::OnBnClickedMfcColorButton)
+	ON_BN_CLICKED(IDC_CHECK2, &CTileTool::OnBnClickedCheckTileOption)
 END_MESSAGE_MAP()
 
 
@@ -127,7 +133,7 @@ void CTileTool::ViewLButtonDown(UINT nFlags, CPoint point)
 {
 	D3DXVECTOR3 vMouse = { float(point.x - OFFSET + m_pView->GetScrollPos(0)), float(point.y - OFFSET + m_pView->GetScrollPos(1)), 0.f };
 
-	m_pView->m_pTerrain->TileChange(vMouse, BYTE(m_dwDrawID));
+	m_pView->m_pTerrain->TileChange(vMouse, BYTE(m_dwDrawID), m_byOptionID);
 }
 
 void CTileTool::ViewMouseMove(UINT nFlags, CPoint point)
@@ -135,7 +141,7 @@ void CTileTool::ViewMouseMove(UINT nFlags, CPoint point)
 	D3DXVECTOR3 vMouse = { float(point.x - OFFSET + m_pView->GetScrollPos(0)), float(point.y - OFFSET + m_pView->GetScrollPos(1)), 0.f };
 
 	if (GetAsyncKeyState(VK_LBUTTON) && GetAsyncKeyState('Z'))
-		m_pView->m_pTerrain->TileChange(vMouse, BYTE(m_dwDrawID));
+		m_pView->m_pTerrain->TileChange(vMouse, BYTE(m_dwDrawID), m_byOptionID);
 }
 
 
@@ -163,6 +169,41 @@ void CTileTool::HorizontalScroll()
 		m_ListBox.SetHorizontalExtent(iCX);
 }
 
+void CTileTool::Init_TileList()
+{
+	CString tpath = _T("../Texture/Stage/Terrain/Tile2/*.*");
+
+	//검색 클래스
+	CFileFind finder;
+
+	//CFileFind는 파일, 디렉터리가 존재하면 TRUE 를 반환함
+	BOOL bWorking = finder.FindFile(tpath); //
+
+	CString fileName;
+	CString DirName;
+
+	while (bWorking)
+	{
+		//다음 파일 / 폴더 가 존재하면다면 TRUE 반환
+		bWorking = finder.FindNextFile();
+		//파일 일때
+		if (finder.IsArchived())
+		{
+			//파일의 이름
+			CString _fileName = finder.GetFileName();
+
+			// 현재폴더 상위폴더 썸네일파일은 제외
+			if (_fileName == _T(".") ||
+				_fileName == _T("..") ||
+				_fileName == _T("Thumbs.db")) continue;
+
+			fileName = finder.GetFileTitle();
+			m_ListBox.AddString(fileName);
+			//읽어온 파일 이름을 리스트박스에 넣음
+		}
+	}
+}
+
 
 
 void CTileTool::OnBnClickedTileXYChange()
@@ -184,6 +225,49 @@ BOOL CTileTool::OnInitDialog()
 	CMainFrame* pMainFrm = dynamic_cast<CMainFrame*>(AfxGetApp()->GetMainWnd());
 	m_pView = dynamic_cast<CMFCToolView*>(pMainFrm->m_MainSplitterWnd.GetPane(0, 1));
 
+	for (int i = 0; i < E_TILE::OPTION_END; ++i) {
+		m_mapTileOptionColor.emplace(i, D3DCOLORVALUE{ 0, 0, 0, 0 });
+	}
+
+	for (int i = 0; i < E_TILE::OPTION_END; ++i) {
+		m_TileOptionList.InsertString(i, E_TILE::str[i].c_str());
+	}
+
+	m_TileOptionList.SetCurSel(0);
+
+	Init_TileList();
+
 	return TRUE;  // return TRUE unless you set the focus to a control
 				  // 예외: OCX 속성 페이지는 FALSE를 반환해야 합니다.
+}
+
+
+void CTileTool::OnCbnSelchangeTileOption()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+
+	int index = m_TileOptionList.GetCurSel();
+	D3DCOLORVALUE color = m_mapTileOptionColor[index];
+	m_ColorButton.SetColor(RGB(color.r, color.g, color.b));
+	m_byOptionID = index;
+}
+
+void CTileTool::OnBnClickedMfcColorButton()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+
+	UpdateData(TRUE);
+	int index = m_TileOptionList.GetCurSel();
+	COLORREF color = m_ColorButton.GetColor();
+	m_mapTileOptionColor[index].r = (color & RGB(255, 0, 0));
+	m_mapTileOptionColor[index].g = (color & RGB(0, 255, 0)) >> 8;
+	m_mapTileOptionColor[index].b = (color & RGB(0, 0, 255)) >> 16;
+}
+
+
+void CTileTool::OnBnClickedCheckTileOption()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+
+	m_pView->m_pTerrain->m_bDrawOption = m_CheckTileOption.GetCheck();
 }

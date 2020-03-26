@@ -7,6 +7,8 @@
 class CMFCToolDoc; 
 class CTerrain; 
 class CLine;
+class CMapTool;
+class CObj;
 class CMFCToolView : public CScrollView
 {
 protected: // serialization에서만 만들어집니다.
@@ -42,7 +44,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 public:
-	CTerrain* m_pTerrain;
+	CTerrain* m_pTerrain; // 저장
 	float m_fAngle;
 	int m_iColor;
 	int m_iChangeSpeed;
@@ -50,7 +52,11 @@ public:
 
 	MAPTOOL::ID m_eToolID{ MAPTOOL::ID_END };
 	CPoint m_tMouseOldPt;
-	TEXINFO* m_pBackgroundTex{ nullptr };
+	TEXINFO* m_pBackgroundTex{ nullptr }; // 저장
+
+	CMapTool* m_pMapTool{ nullptr };
+
+	list<CObj*> m_ObjList; // 저장
 
 public:
 	virtual void OnInitialUpdate();

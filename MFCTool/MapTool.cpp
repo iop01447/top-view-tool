@@ -36,12 +36,6 @@ void CMapTool::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_COMBO_TEST, m_LayerList);
-
-	for (int i = 0; i < LAYER::ID_END; ++i) {
-		m_LayerList.InsertString(i, LAYER::str[i].c_str());
-	}
-
-	m_LayerList.SetCurSel(0);
 	DDX_Control(pDX, IDC_COMBO_BACK_GRUND, m_Backgrundlist);
 }
 
@@ -94,38 +88,6 @@ void CMapTool::OnBnClickedSave()
 	
 }
 
-
-void CMapTool::OnCbnSelchangeComboTest()
-{
-	//// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-
-	//int iIndex;
-	//iIndex = m_cbTest.GetCurSel();
-
-	//if (CB_ERR != iIndex)
-	//{
-	//	CString sName;
-	//	m_cbTest.GetLBText(iIndex, sName);
-	//	SetDlgItemText(IDC_COMBO_TEST, sName);
-
-	//	if (sName == L"1번째")
-	//	{
-	//		//원하는 명령1
-	//	}
-	//	else if (sName == L"2번째")
-	//	{
-	//		//2
-	//	}
-	//	else
-	//	{
-	//		//3
-	//	}
-	//}
-
-
-}
-
-
 void CMapTool::Init_Terrain()
 {
 	CMainFrame* pMain = dynamic_cast<CMainFrame*>(::AfxGetApp()->GetMainWnd());
@@ -139,7 +101,7 @@ void CMapTool::Init_Terrain()
 		if (nullptr == m_pTerrainArr[i])
 		{
 			m_pTerrainArr[i] = new CTerrain;
-			if (FAILED(m_pTerrainArr[i]->Initialize(TILEX, TILEY, 0, E_TILE::OPTION_END)))
+			if (FAILED(m_pTerrainArr[i]->Initialize(TILEX, TILEY, 0, E_TILE::EMPTY)))
 				AfxMessageBox(L"Terrain Initialize Failed");
 			m_pTerrainArr[i]->Set_View(pView);
 		}
@@ -203,6 +165,13 @@ BOOL CMapTool::OnInitDialog()
 
 	if (m_pLineTool->GetSafeHwnd() == nullptr)
 		m_pLineTool->Create(IDD_LINETOOL);
+
+	for (int i = 0; i < LAYER::ID_END; ++i) {
+		m_LayerList.InsertString(i, LAYER::str[i].c_str());
+	}
+
+	m_LayerList.SetCurSel(0);
+
 	return TRUE;  // return TRUE unless you set the focus to a control
 				  // 예외: OCX 속성 페이지는 FALSE를 반환해야 합니다.
 }

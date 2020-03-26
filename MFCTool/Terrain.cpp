@@ -3,6 +3,9 @@
 #include "MFCToolView.h"
 #include "MainFrm.h"
 #include "MiniView.h"
+#include "MyForm.h"
+#include "MapTool.h"
+#include "TileTool.h"
 
 CTerrain::CTerrain()
 {
@@ -157,6 +160,35 @@ void CTerrain::Render()
 
 		GET_INSTANCE(CDevice)->Get_Sprite()->SetTransform(&matWorld);
 		GET_INSTANCE(CDevice)->Get_Font()->DrawTextW(GET_INSTANCE(CDevice)->Get_Sprite(), szBuf, lstrlen(szBuf), nullptr, 0, D3DCOLOR_ARGB(255, 0,0,0));
+		
+		if (m_bDrawOption) {
+
+			const TEXINFO* pTexInfo = GET_INSTANCE(CTextureMgr)->Get_TexInfo(L"White");
+			if (nullptr == pTexInfo)
+				return;
+
+			float fScaleX = TILECX / (float)pTexInfo->tImageInfo.Width;
+			float fScaleY = TILECY / (float)pTexInfo->tImageInfo.Height;
+
+			float fCenterX = pTexInfo->tImageInfo.Width * 0.5f;
+			float fCenterY = pTexInfo->tImageInfo.Height * 0.5f;
+
+			D3DXMatrixScaling(&matScale, fScaleX, fScaleY, 0.f);
+			D3DXMatrixTranslation(&matTrans, OFFSET + pTile->vPos.x - m_pView->GetScrollPos(0), OFFSET + pTile->vPos.y - m_pView->GetScrollPos(1), 0.f);
+			matWorld = matScale * matTrans;
+			SetRatio(&matWorld, fX, fY);
+
+			CMainFrame* pMainFrm = dynamic_cast<CMainFrame*>(AfxGetApp()->GetMainWnd());
+			CMyForm* pView = dynamic_cast<CMyForm*>(pMainFrm->m_SecondSplitterWnd.GetPane(1, 0));
+
+			D3DCOLORVALUE color = pView->m_MapTool.m_pTileTool->m_mapTileOptionColor[pTile->byOption];
+
+			GET_INSTANCE(CDevice)->Get_Sprite()->SetTransform(&matWorld);
+			GET_INSTANCE(CDevice)->Get_Sprite()->Draw(pTexInfo->pTexture,
+				nullptr, &D3DXVECTOR3(fCenterX, fCenterY, 0.f), nullptr, 
+				D3DCOLOR_ARGB(255, (int)color.r, (int)color.g, (int)color.b));
+		}
+
 		++iIndex; 
 	}
 	// 2D에서 직교백터를 뽑아내는 방법. 
@@ -225,8 +257,9 @@ void CTerrain::ChangeTileXY(int iTileX, int iTileY)
 			pTile->byOption = 0;
 
 			size_t index = i * m_iTileX + j;
-			if (index < m_vecTile.size()) {
-				TILE* oldTile = m_vecTile[i * m_iTileX + j];
+			if (index < m_vecTile.size() &&
+				i < m_iTileY && j < m_iTileX) {
+				TILE* oldTile = m_vecTile[index];
 				pTile->byDrawID = oldTile->byDrawID;
 				pTile->byOption = oldTile->byOption;
 			}
