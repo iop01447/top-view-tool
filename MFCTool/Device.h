@@ -51,6 +51,10 @@ public:
 	bool Get_GridChack() { return bGridChack; }
 	void GridSet();
 
+public:
+	void Line_Set(D3DXVECTOR2& rMouse);
+
+
 private:
 	static CDevice* m_pInstance; 
 	LPD3DXFONT m_pFont; // DirectX에서 제공해주는 com 객체 폰드 관련 
@@ -74,5 +78,10 @@ private:
 
 	vector<LINE*> m_vGrid;
 	vector<LINE*> m_vGrid_Per;
+
+	LINE* pLineM;
+
+
+	vector<LINE*> m_vLine;
 };
 
