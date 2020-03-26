@@ -125,25 +125,17 @@ void CTileTool::OnDropFiles(HDROP hDropInfo)
 
 void CTileTool::ViewLButtonDown(UINT nFlags, CPoint point)
 {
-	CMainFrame* pMainFrm = dynamic_cast<CMainFrame*>(AfxGetApp()->GetMainWnd());
-	CMyForm* pMyForm = dynamic_cast<CMyForm*>(pMainFrm->m_SecondSplitterWnd.GetPane(1, 0));
-	CTileTool* pTileTool = pMyForm->m_MapTool.m_pTileTool;
-	CMFCToolView* pView = dynamic_cast<CMFCToolView*>(pMainFrm->m_MainSplitterWnd.GetPane(0, 1));
+	D3DXVECTOR3 vMouse = { float(point.x - OFFSET + m_pView->GetScrollPos(0)), float(point.y - OFFSET + m_pView->GetScrollPos(1)), 0.f };
 
-	D3DXVECTOR3 vMouse = { float(point.x + pView->GetScrollPos(0)), float(point.y + pView->GetScrollPos(1)), 0.f };
-	pView->m_pTerrain->TileChange(vMouse, BYTE(pTileTool->m_dwDrawID));
+	m_pView->m_pTerrain->TileChange(vMouse, BYTE(m_dwDrawID));
 }
 
 void CTileTool::ViewMouseMove(UINT nFlags, CPoint point)
 {
-	CMainFrame* pMainFrm = dynamic_cast<CMainFrame*>(AfxGetApp()->GetMainWnd());
-	CMFCToolView* pView = dynamic_cast<CMFCToolView*>(pMainFrm->m_MainSplitterWnd.GetPane(0, 1));
-	D3DXVECTOR3 vMouse = { float(point.x + pView->GetScrollPos(0)), float(point.y + pView->GetScrollPos(1)), 0.f };
-	CMyForm* pMyForm = dynamic_cast<CMyForm*>(pMainFrm->m_SecondSplitterWnd.GetPane(1, 0));
-	CTileTool* pTileTool = pMyForm->m_MapTool.m_pTileTool;
+	D3DXVECTOR3 vMouse = { float(point.x - OFFSET + m_pView->GetScrollPos(0)), float(point.y - OFFSET + m_pView->GetScrollPos(1)), 0.f };
 
 	if (GetAsyncKeyState(VK_LBUTTON) && GetAsyncKeyState('Z'))
-		pView->m_pTerrain->TileChange(vMouse, BYTE(pTileTool->m_dwDrawID));
+		m_pView->m_pTerrain->TileChange(vMouse, BYTE(m_dwDrawID));
 }
 
 
@@ -183,4 +175,19 @@ void CTileTool::OnBnClickedTileCntChange()
 	m_iTileX = m_iTileY;
 	m_iTileY = tmp;
 	UpdateData(FALSE); */
+
+
+}
+
+
+BOOL CTileTool::OnInitDialog()
+{
+	CDialog::OnInitDialog();
+
+	// TODO:  여기에 추가 초기화 작업을 추가합니다.
+	CMainFrame* pMainFrm = dynamic_cast<CMainFrame*>(AfxGetApp()->GetMainWnd());
+	m_pView = dynamic_cast<CMFCToolView*>(pMainFrm->m_MainSplitterWnd.GetPane(0, 1));
+
+	return TRUE;  // return TRUE unless you set the focus to a control
+				  // 예외: OCX 속성 페이지는 FALSE를 반환해야 합니다.
 }

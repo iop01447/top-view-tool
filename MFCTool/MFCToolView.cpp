@@ -85,7 +85,7 @@ void CMFCToolView::OnDraw(CDC* pDC)
 
 	if(m_pTerrain) m_pTerrain->Render();
 
-	m_pLine->GridRender();
+	//m_pLine->GridRender();
 	
 	GET_INSTANCE(CDevice)->Render_End(); 
 }

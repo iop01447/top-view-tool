@@ -3,6 +3,7 @@
 
 // CTileTool 대화 상자입니다.
 
+class CMFCToolView;
 class CTileTool : public CDialog
 {
 	DECLARE_DYNAMIC(CTileTool)
@@ -25,6 +26,7 @@ public:
 	CListBox m_ListBox;
 	CStatic m_Picture;
 	DWORD m_dwDrawID;
+	CMFCToolView* m_pView;
 
 public:
 	void HorizontalScroll();
@@ -39,4 +41,5 @@ public:
 	int m_iTileY;
 	int m_iTileX;
 	afx_msg void OnBnClickedTileCntChange();
+	virtual BOOL OnInitDialog();
 };
