@@ -237,22 +237,22 @@ void CDevice::Render_End(HWND hWnd /*= nullptr*/)
 				m_pLine->Draw(LineS, 2, D3DCOLOR_ARGB(255, 255, 255, 255));
 			}
 		}
-	}
 
 
-	if (!(m_vLine.empty()))
-	{
-		for (LINE* iter : m_vLine)
+		if (!(m_vLine.empty()))
 		{
-			/*D3DXVECTOR2 LineS[2] = {
-				D3DXVECTOR2((*iter).vLine[0].x - Scroll[0].x,(*iter).vLine[0].y - Scroll[0].y),
-				D3DXVECTOR2((*iter).vLine[1].x - Scroll[1].x,(*iter).vLine[1].y - Scroll[1].y)
-			};*/
-			m_pLine->Draw((*iter).vLine, 2, D3DCOLOR_ARGB(255, 255, 255, 255));
+			for (LINE* iter : m_vLine)
+			{
+				D3DXVECTOR2 LineS[2] = {
+					D3DXVECTOR2((*iter).vLine[0].x - Scroll[0].x+ OFFSET,(*iter).vLine[0].y - Scroll[0].y+ OFFSET),
+					D3DXVECTOR2((*iter).vLine[1].x - Scroll[1].x+ OFFSET,(*iter).vLine[1].y - Scroll[1].y+ OFFSET)
+				};
+				m_pLine->Draw(LineS, 2, D3DCOLOR_ARGB(255, 255, 255, 255));
+			}
 		}
-	}
 
-	m_pLine->End();
+		m_pLine->End();
+	}
 
 	m_pDevice->EndScene();
 	// 전면버퍼로 교체! 
