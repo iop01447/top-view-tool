@@ -50,7 +50,7 @@ void CLine::GridRender()
 	}
 	for (int i = 0; i < 20 + 1; i++)
 	{
-		pDC->MoveTo( - m_pView->GetScrollPos(0), i * 32);
+		pDC->MoveTo( -m_pView->GetScrollPos(0), i * 32);
 		pDC->LineTo((int)(1000 * 32 - m_pView->GetScrollPos(0)), i * 32);
 	}
 	m_pView->ReleaseDC(pDC);
