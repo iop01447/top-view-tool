@@ -61,7 +61,7 @@ void CObj::Render(CView* pView)
 	pView->GetClientRect(&rc);
 	fX = WINCX / float(rc.right - rc.left);
 	fY = WINCY / float(rc.bottom - rc.top);
-	SetRatio(&matWorld, fX, fY);
+	//SetRatio(&matWorld, fX, fY);
 
 	GET_INSTANCE(CDevice)->Get_Sprite()->SetTransform(&matWorld);
 	GET_INSTANCE(CDevice)->Get_Sprite()->Draw(pTexInfo->pTexture, nullptr,

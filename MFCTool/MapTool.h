@@ -36,7 +36,7 @@ public:
 	CComboBox m_LayerList;
 	CComboBox m_Backgrundlist;
 
-	CTerrain* m_pTerrainArr[MAPTOOL::ID_END];
+	CTerrain* m_pTerrainArr[LAYER::ID_END];
 
 public:
 	void Init_Terrain();

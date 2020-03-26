@@ -201,37 +201,41 @@ void CDevice::Render_End(HWND hWnd /*= nullptr*/)
 {
 	m_pSprite->End();
 
-	m_pLine->Begin();
 	CMainFrame* pMain = dynamic_cast<CMainFrame*>(AfxGetApp()->GetMainWnd());
 	if (nullptr == pMain)
 		return;
 	CMFCToolView* pView = dynamic_cast<CMFCToolView*>(pMain->m_MainSplitterWnd.GetPane(0, 1));
 
-	D3DXVECTOR2 Scroll[2] =
-	{ D3DXVECTOR2((float)(pView->GetScrollPos(0)),(float)(pView->GetScrollPos(1))),
-		D3DXVECTOR2((float)(pView->GetScrollPos(0)),(float)(pView->GetScrollPos(1))) };
+	if (hWnd == pView->m_hWnd
+		|| hWnd == nullptr) {
 
-	if (bGridChack)
-	{
-		for (auto& iter : m_vGrid)
+		m_pLine->Begin();
+		D3DXVECTOR2 Scroll[2] =
+		{ D3DXVECTOR2(pView->GetScrollPos(0),pView->GetScrollPos(1)),
+			D3DXVECTOR2(pView->GetScrollPos(0),pView->GetScrollPos(1)) };
+
+		if (bGridChack)
 		{
+			for (auto& iter : m_vGrid)
+			{
 
-			D3DXVECTOR2 LineS[2] = {
-				D3DXVECTOR2((*iter).vLine[0].x - Scroll[0].x,(*iter).vLine[0].y - Scroll[0].y),
-				D3DXVECTOR2((*iter).vLine[1].x - Scroll[1].x,(*iter).vLine[1].y - Scroll[1].y)
-			};
+				D3DXVECTOR2 LineS[2] = {
+					D3DXVECTOR2((*iter).vLine[0].x - Scroll[0].x,(*iter).vLine[0].y - Scroll[0].y),
+					D3DXVECTOR2((*iter).vLine[1].x - Scroll[1].x,(*iter).vLine[1].y - Scroll[1].y)
+				};
 
-			m_pLine->Draw(LineS, 2, D3DCOLOR_ARGB(255, 255, 255, 255));
-		}
-		for (auto& iter : m_vGrid_Per)
-		{
-			D3DXVECTOR2 LineS[2] = {
-				D3DXVECTOR2((*iter).vLine[0].x - Scroll[0].x,(*iter).vLine[0].y - Scroll[0].y),
-				D3DXVECTOR2((*iter).vLine[1].x - Scroll[1].x,(*iter).vLine[1].y - Scroll[1].y)
-			};
+				m_pLine->Draw(LineS, 2, D3DCOLOR_ARGB(255, 255, 255, 255));
+			}
+			for (auto& iter : m_vGrid_Per)
+			{
+				D3DXVECTOR2 LineS[2] = {
+					D3DXVECTOR2((*iter).vLine[0].x - Scroll[0].x,(*iter).vLine[0].y - Scroll[0].y),
+					D3DXVECTOR2((*iter).vLine[1].x - Scroll[1].x,(*iter).vLine[1].y - Scroll[1].y)
+				};
 
 
-			m_pLine->Draw(LineS, 2, D3DCOLOR_ARGB(255, 255, 255, 255));
+				m_pLine->Draw(LineS, 2, D3DCOLOR_ARGB(255, 255, 255, 255));
+			}
 		}
 	}
 
