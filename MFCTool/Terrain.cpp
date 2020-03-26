@@ -281,3 +281,20 @@ void CTerrain::Release()
 	m_vecTile.clear(); 
 	m_vecTile.shrink_to_fit();
 }
+
+
+HRESULT CTerrain::LoadTile(HANDLE hFile, size_t size)
+{
+	m_vecTile.reserve(size);
+
+	DWORD dwByte = 0;
+	TILE* pTile = nullptr;
+	for(int i=0; i<size; ++i)
+	{
+		pTile = new TILE;
+		ReadFile(hFile, pTile, sizeof(TILE), &dwByte, nullptr);
+		m_vecTile.emplace_back(pTile);
+	}
+
+	return S_OK;
+}

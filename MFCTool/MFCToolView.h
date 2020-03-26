@@ -54,7 +54,9 @@ public:
 
 	MAPTOOL::ID m_eToolID{ MAPTOOL::ID_END };
 	CPoint m_tMouseOldPt;
-	TEXINFO* m_pBackgroundTex{ nullptr }; // 저장
+
+	int m_iBackgroundID{ 0 }; // 저장
+	TEXINFO* m_pBackgroundTex{ nullptr };
 
 	CMapTool* m_pMapTool{ nullptr };
 

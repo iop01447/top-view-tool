@@ -17,6 +17,8 @@ public:
 
 	void ChangeTileXY(int iTileX, int iTileY);
 
+	HRESULT LoadTile(HANDLE hFile, size_t size);
+
 public:
 	HRESULT Initialize(int iTileX, int iTileY, BYTE byDrawID, E_TILE::OPTION eOption);
 	void Render(); 
