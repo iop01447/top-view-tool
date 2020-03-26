@@ -10,8 +10,8 @@ CDevice::CDevice()
 	,m_pFont(nullptr)
 	,m_pLine(nullptr)
 	,bGridChack(false)
+	, pLineM(nullptr)
 {
-
 }
 
 
@@ -132,9 +132,10 @@ HRESULT CDevice::InitDevice()
 
 	GridSet();
 
+	pLineM = new LINE;
 
-
-
+	pLineM->vLine[0] = { -1.f,-1.f };
+	pLineM->vLine[1] = { -1.f,-1.f };
 	m_pLine->SetWidth(2); // 선굵기
 
 
@@ -160,6 +161,7 @@ void CDevice::Release()
 		m_pLine->Release();
 
 
+	
 
 
 
@@ -172,6 +174,13 @@ void CDevice::Release()
 
 	m_vGrid_Per.clear();
 	m_vGrid_Per.shrink_to_fit();
+
+	for_each(m_vLine.begin(), m_vLine.end(), Safe_Delete<LINE*>);
+
+	m_vLine.clear();
+	m_vLine.shrink_to_fit();
+
+	Safe_Delete(pLineM);
 	// 순서 중요 ! 뎅글링 포인터를 방지하기 위해 레퍼런스 카운트 라는 기법을 사용하고 있음. 
 
 }
@@ -228,9 +237,22 @@ void CDevice::Render_End(HWND hWnd /*= nullptr*/)
 				m_pLine->Draw(LineS, 2, D3DCOLOR_ARGB(255, 255, 255, 255));
 			}
 		}
-
-		m_pLine->End();
 	}
+
+
+	if (!(m_vLine.empty()))
+	{
+		for (LINE* iter : m_vLine)
+		{
+			/*D3DXVECTOR2 LineS[2] = {
+				D3DXVECTOR2((*iter).vLine[0].x - Scroll[0].x,(*iter).vLine[0].y - Scroll[0].y),
+				D3DXVECTOR2((*iter).vLine[1].x - Scroll[1].x,(*iter).vLine[1].y - Scroll[1].y)
+			};*/
+			m_pLine->Draw((*iter).vLine, 2, D3DCOLOR_ARGB(255, 255, 255, 255));
+		}
+	}
+
+	m_pLine->End();
 
 	m_pDevice->EndScene();
 	// 전면버퍼로 교체! 
@@ -276,6 +298,28 @@ void CDevice::GridSet()
 
 	}
 
+
+}
+
+void CDevice::Line_Set(D3DXVECTOR2 & rMouse)
+{
+
+
+	if ((pLineM->vLine[0]) == D3DXVECTOR2(-1.f,-1.f))
+	{
+		pLineM->vLine[0] = { rMouse.x,rMouse.y };
+	}
+	else
+	{
+		pLineM->vLine[1] = { rMouse.x,rMouse.y };
+
+		LINE* line = new LINE;
+		*line = *pLineM;
+		m_vLine.emplace_back(line);
+
+		pLineM->vLine[0] = { -1.f,-1.f };
+		pLineM->vLine[1] = { -1.f,-1.f };
+	}
 
 }
 

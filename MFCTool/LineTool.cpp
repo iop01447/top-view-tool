@@ -57,6 +57,11 @@ void CLineTool::OnBnClickedGrid()
 
 void CLineTool::ViewLButtonDown(UINT nFlags, CPoint point)
 {
+	CMainFrame* pMain = dynamic_cast<CMainFrame*>(::AfxGetApp()->GetMainWnd());
+	CMFCToolView* pView = dynamic_cast<CMFCToolView*>(pMain->m_MainSplitterWnd.GetPane(0, 1));
+	D3DXVECTOR2 vMouse = { float(point.x - OFFSET + pView->GetScrollPos(0)), float(point.y - OFFSET + pView->GetScrollPos(1))};
+
+	GET_INSTANCE(CDevice)->Line_Set(vMouse);
 }
 
 void CLineTool::ViewMouseMove(UINT nFlags, CPoint point)
