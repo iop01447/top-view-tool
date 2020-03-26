@@ -139,7 +139,7 @@ void CMapTool::Init_Terrain()
 		if (nullptr == m_pTerrainArr[i])
 		{
 			m_pTerrainArr[i] = new CTerrain;
-			if (FAILED(m_pTerrainArr[i]->Initialize((i+1) * TILEX, (i + 1) * TILEY, i, E_TILE::OPTION_END)))
+			if (FAILED(m_pTerrainArr[i]->Initialize(TILEX, TILEY, 0, E_TILE::OPTION_END)))
 				AfxMessageBox(L"Terrain Initialize Failed");
 			m_pTerrainArr[i]->Set_View(pView);
 		}
@@ -254,8 +254,8 @@ void CMapTool::OnCbnLayerSelchange()
 	pView->m_pTerrain = m_pTerrainArr[index];
 
 	pView->SetScrollSizes(MM_TEXT, 
-		CSize(m_pTerrainArr[index]->m_iTileX * TILECX,
-			m_pTerrainArr[index]->m_iTileY * TILECY));
+		CSize(m_pTerrainArr[index]->m_iTileX * TILECX + OFFSET * 2,
+			m_pTerrainArr[index]->m_iTileY * TILECY + OFFSET * 2));
 
 }
 

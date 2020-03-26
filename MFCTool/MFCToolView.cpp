@@ -292,15 +292,15 @@ void CMFCToolView::Draw_Background()
 	
 	float fScale = 0.3f;
 
-	int width = m_pBackgroundTex->tImageInfo.Width * fScale;
-	int height = m_pBackgroundTex->tImageInfo.Height * fScale;
-	int x = WINCX / width + 2;
-	int y = WINCY / height + 2;
+	float width = m_pBackgroundTex->tImageInfo.Width * fScale;
+	float height = m_pBackgroundTex->tImageInfo.Height * fScale;
+	int x = int(WINCX / width ) + 2;
+	int y = int(WINCY / height) + 2;
 
 	for (int i = 0; i < y; ++i) {
 		for (int j = 0; j < x; ++j) {
 			D3DXMatrixScaling(&matScale, fScale, fScale, 0.f);
-			D3DXMatrixTranslation(&matTrans, j * width, i * height, 0.f);
+			D3DXMatrixTranslation(&matTrans, float(j * width), float(i * height), 0.f);
 			matWorld = matScale * matTrans;
 
 			GET_INSTANCE(CDevice)->Get_Sprite()->SetTransform(&matWorld);

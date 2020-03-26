@@ -41,7 +41,7 @@ void CTileTool::DoDataExchange(CDataExchange* pDX)
 BEGIN_MESSAGE_MAP(CTileTool, CDialog)
 	ON_LBN_SELCHANGE(IDC_LIST1, &CTileTool::OnLbnSelchangeTileList)
 	ON_WM_DROPFILES()
-	ON_BN_CLICKED(IDC_BUTTON1, &CTileTool::OnBnClickedTileCntChange)
+	ON_BN_CLICKED(IDC_BUTTON1, &CTileTool::OnBnClickedTileXYChange)
 END_MESSAGE_MAP()
 
 
@@ -165,18 +165,14 @@ void CTileTool::HorizontalScroll()
 
 
 
-void CTileTool::OnBnClickedTileCntChange()
+void CTileTool::OnBnClickedTileXYChange()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
 	UpdateData(TRUE);
 
-	/* // 잘 되는지 테스트 
-	int tmp = m_iTileX;
-	m_iTileX = m_iTileY;
-	m_iTileY = tmp;
-	UpdateData(FALSE); */
-
-
+	m_pView->m_pTerrain->ChangeTileXY(m_iTileX, m_iTileY);
+	m_pView->SetScrollSizes(MM_TEXT,
+		CSize(m_iTileX * TILECX + OFFSET * 2, m_iTileY * TILECY + OFFSET * 2));
 }
 
 

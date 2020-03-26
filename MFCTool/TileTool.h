@@ -40,6 +40,6 @@ public:
 
 	int m_iTileY;
 	int m_iTileX;
-	afx_msg void OnBnClickedTileCntChange();
+	afx_msg void OnBnClickedTileXYChange();
 	virtual BOOL OnInitDialog();
 };
