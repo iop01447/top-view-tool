@@ -9,7 +9,7 @@ private:
 	CTextureMgr();
 	~CTextureMgr();
 public:
-	const TEXINFO* Get_TexInfo(const wstring& wstrObjectKey, const wstring& wstrStateKey = L"", const int& rImageIndex = 0);
+	TEXINFO* Get_TexInfo(const wstring& wstrObjectKey, const wstring& wstrStateKey = L"", const int& rImageIndex = 0);
 public:
 	HRESULT InsertTexture(TEXID eTexID, // 멀티텍스쳐나 싱글텍스쳐냐에 따라 삽입이 달라지겠지 ? 그래서 그거 구분하려고 ! 
 		const wstring& wstrFilePath, // 경로 받아와서 넘겨줄거임. 

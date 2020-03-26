@@ -80,9 +80,13 @@ void CMFCToolView::OnDraw(CDC* pDC)
 		return;
 
 	GET_INSTANCE(CDevice)->Render_Begin(); 
-	if(m_pTerrain)
-		m_pTerrain->Render();
+
+	Draw_Background();
+
+	if(m_pTerrain) m_pTerrain->Render();
+
 	m_pLine->GridRender();
+	
 	GET_INSTANCE(CDevice)->Render_End(); 
 }
 
@@ -187,6 +191,8 @@ void CMFCToolView::OnInitialUpdate()
 	// CDevice->InitDevice 한 다음에 텍스쳐 넣어야 함!! **************************
 	GET_INSTANCE(CTextureMgr)->InsertTexture(CTextureMgr::SINGLETEX, L"../Texture/Cube.png", L"Cube");
 	GET_INSTANCE(CTextureMgr)->InsertTexture(CTextureMgr::MULTITEX, L"../Texture/Stage/Terrain/Tile2/Tile%d.png", L"Terrain", L"Tile", 9);
+	GET_INSTANCE(CTextureMgr)->InsertTexture(CTextureMgr::MULTITEX, L"../Texture/Stage/Background/%d.png", L"Background", L"Background", 2);
+	m_pBackgroundTex = CTextureMgr::Get_Instance()->Get_TexInfo(L"Background", L"Background", 0);
 
 	if (nullptr == m_pLine)
 	{
@@ -274,4 +280,32 @@ void CMFCToolView::OnRButtonDown(UINT nFlags, CPoint point)
 	m_tMouseOldPt = point;
 
 	CScrollView::OnRButtonDown(nFlags, point);
+}
+
+void CMFCToolView::Draw_Background()
+{
+	if (!m_pBackgroundTex) return;
+	D3DXMATRIX matScale, matTrans, matWorld;
+
+	float fCenterX = m_pBackgroundTex->tImageInfo.Width * 0.5f;
+	float fCenterY = m_pBackgroundTex->tImageInfo.Height * 0.5f;
+	
+	float fScale = 0.3f;
+
+	int width = m_pBackgroundTex->tImageInfo.Width * fScale;
+	int height = m_pBackgroundTex->tImageInfo.Height * fScale;
+	int x = WINCX / width + 2;
+	int y = WINCY / height + 2;
+
+	for (int i = 0; i < y; ++i) {
+		for (int j = 0; j < x; ++j) {
+			D3DXMatrixScaling(&matScale, fScale, fScale, 0.f);
+			D3DXMatrixTranslation(&matTrans, j * width, i * height, 0.f);
+			matWorld = matScale * matTrans;
+
+			GET_INSTANCE(CDevice)->Get_Sprite()->SetTransform(&matWorld);
+			GET_INSTANCE(CDevice)->Get_Sprite()->Draw(m_pBackgroundTex->pTexture, nullptr,
+				&D3DXVECTOR3(fCenterX, fCenterY, 0.f), nullptr, D3DCOLOR_ARGB(255, 255, 255, 255));
+		}
+	}
 }

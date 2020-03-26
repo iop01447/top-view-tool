@@ -50,6 +50,7 @@ public:
 
 	MAPTOOL::ID m_eToolID{ MAPTOOL::ID_END };
 	CPoint m_tMouseOldPt;
+	TEXINFO* m_pBackgroundTex{ nullptr };
 
 public:
 	virtual void OnInitialUpdate();
@@ -57,6 +58,9 @@ public:
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
 	afx_msg void OnRButtonDown(UINT nFlags, CPoint point);
+
+public:
+	void Draw_Background();
 };
 
 #ifndef _DEBUG  // MFCToolView.cpp의 디버그 버전

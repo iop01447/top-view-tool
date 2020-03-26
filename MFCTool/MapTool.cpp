@@ -261,6 +261,11 @@ void CMapTool::OnCbnLayerSelchange()
 
 void CMapTool::OnCbnBackgroundSelchange()
 {
+	int index = m_Backgrundlist.GetCurSel();
+	CMainFrame* pMain = dynamic_cast<CMainFrame*>(::AfxGetApp()->GetMainWnd());
+	CMFCToolView* pView = dynamic_cast<CMFCToolView*>(pMain->m_MainSplitterWnd.GetPane(0, 1));
+	pView->m_pBackgroundTex = CTextureMgr::Get_Instance()->Get_TexInfo(L"Background", L"Background", index);
+
 }
 
 

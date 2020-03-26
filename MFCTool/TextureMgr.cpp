@@ -15,11 +15,13 @@ CTextureMgr::~CTextureMgr()
 	Release(); 
 }
 
-const TEXINFO * CTextureMgr::Get_TexInfo(const wstring & wstrObjectKey, const wstring & wstrStateKey, const int & rImageIndex)
+TEXINFO * CTextureMgr::Get_TexInfo(const wstring & wstrObjectKey, const wstring & wstrStateKey, const int & rImageIndex)
 {
-	auto& iter = m_mapTexture.find(wstrObjectKey); 
-	if (m_mapTexture.end() == iter)
+	auto& iter = m_mapTexture.find(wstrObjectKey);
+	if (m_mapTexture.end() == iter) {
+		assert(false && "TexInfo ¾øÀ½");
 		return nullptr;
+	}
 
 	return iter->second->Get_TexInfo(wstrStateKey, rImageIndex); 
 }
