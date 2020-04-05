@@ -225,8 +225,9 @@ void CTerrain::MiniRender()
 		float fCenterY = pTexInfo->tImageInfo.Height *0.5f; 
 
 		D3DXMatrixScaling(&matScale, m_vecTile[i]->vSize.x, m_vecTile[i]->vSize.y, 0.f); 
-		D3DXMatrixTranslation(&matTrans, m_vecTile[i]->vPos.x - m_pView->GetScrollPos(0), m_vecTile[i]->vPos.y - m_pView->GetScrollPos(1), 0.f); 
-		matWorld = matScale * matTrans; 
+		//D3DXMatrixTranslation(&matTrans, m_vecTile[i]->vPos.x - m_pView->GetScrollPos(0), m_vecTile[i]->vPos.y - m_pView->GetScrollPos(1), 0.f); 
+		//matWorld = matScale * matTrans; 
+		matWorld = matScale;
 
 		SetRatio(&matWorld, 1.f, 1.f);
 
