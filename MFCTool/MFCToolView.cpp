@@ -20,6 +20,7 @@
 #include "ObjectTool.h"
 #include "LineTool.h"
 #include "Line.h"
+#include "Obj.h"
 HWND g_hWND; 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -44,7 +45,7 @@ END_MESSAGE_MAP()
 // CMFCToolView 생성/소멸
 
 CMFCToolView::CMFCToolView()
-	:m_pTerrain(nullptr),m_pLine(nullptr)
+	:m_pTerrain(nullptr)
 {
 	// TODO: 여기에 생성 코드를 추가합니다.
 	m_fAngle = 0.f;
@@ -55,9 +56,10 @@ CMFCToolView::CMFCToolView()
 
 CMFCToolView::~CMFCToolView()
 {
-	Safe_Delete(m_pLine);
 	GET_INSTANCE(CTextureMgr)->Destroy_Instance();
 	CDevice::Destroy_Instance(); 
+
+	for_each(m_ObjList.begin(), m_ObjList.end(), Safe_Delete<CObj*>);
 }
 
 BOOL CMFCToolView::PreCreateWindow(CREATESTRUCT& cs)
@@ -80,10 +82,24 @@ void CMFCToolView::OnDraw(CDC* pDC)
 		return;
 
 	GET_INSTANCE(CDevice)->Render_Begin(); 
-	if(m_pTerrain)
-		m_pTerrain->Render();
-	m_pLine->GridRender();
+
+	Draw_Background();
+
+	if(m_pTerrain) m_pTerrain->Render();
+
+	if (m_eToolID == MAPTOOL::OBJECT) {
+		m_pMapTool->m_pObjectTool->DrawView();
+	}
+
+	for (auto& obj : m_ObjList) {
+		obj->Render(this);
+	}
+
+	//m_pLine->GridRender();
+
+	
 	GET_INSTANCE(CDevice)->Render_End(); 
+
 }
 
 
@@ -137,8 +153,8 @@ void CMFCToolView::OnInitialUpdate()
 	SetTimer(0, 0, nullptr); 
 	// SetScrollSizes 스크롤 설정하는 함수 - 1.스크롤 범위를 설정하는 인자. MM_TEXT픽셀단위로 계산하겠다. 
 	//2. 스크롤 전체 크기.  .
-	SetScrollSizes(MM_TEXT, CSize(TILEX * TILECX, TILEY * TILECY));
-	
+	SetScrollSizes(MM_TEXT, CSize(TILEX * TILECX + OFFSET * 2, TILEY * TILECY + OFFSET * 2));
+
 	// TODO: 여기에 특수화된 코드를 추가 및/또는 기본 클래스를 호출합니다.
 	/*
 	지금 내가 하고자 하는 건. 
@@ -187,34 +203,30 @@ void CMFCToolView::OnInitialUpdate()
 	// CDevice->InitDevice 한 다음에 텍스쳐 넣어야 함!! **************************
 	GET_INSTANCE(CTextureMgr)->InsertTexture(CTextureMgr::SINGLETEX, L"../Texture/Cube.png", L"Cube");
 	GET_INSTANCE(CTextureMgr)->InsertTexture(CTextureMgr::MULTITEX, L"../Texture/Stage/Terrain/Tile2/Tile%d.png", L"Terrain", L"Tile", 9);
+	GET_INSTANCE(CTextureMgr)->InsertTexture(CTextureMgr::MULTITEX, L"../Texture/Stage/Background/%d.png", L"Background", L"Background", 2);
+	m_pBackgroundTex = CTextureMgr::Get_Instance()->Get_TexInfo(L"Background", L"Background", 0);
+	CTextureMgr::Get_Instance()->InsertTexture(CTextureMgr::SINGLETEX, L"../Texture/white.png", L"White");
+	CTextureMgr::Get_Instance()->InsertTexture(CTextureMgr::MULTITEX, L"../Texture/Stage/Object/%d.png", L"Object", L"Object", 3);
 
-	if (nullptr == m_pLine)
-	{
-		m_pLine = new CLine;
-		if (FAILED(m_pLine->Initialize())) {
-			AfxMessageBox(L"Line Initialize Failed");
-			return;
-		}
-		m_pLine->Set_View(this);
-	}
+
+
+	m_pMapTool = &dynamic_cast<CMyForm*>(pMainFrame->m_SecondSplitterWnd.GetPane(1, 0))->m_MapTool;
 }
 
 
 void CMFCToolView::OnLButtonDown(UINT nFlags, CPoint point)
 {
 	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
-	CMainFrame* pMainFrm = dynamic_cast<CMainFrame*>(AfxGetApp()->GetMainWnd());
-	CMapTool& MapTool = dynamic_cast<CMyForm*>(pMainFrm->m_SecondSplitterWnd.GetPane(1, 0))->m_MapTool;
 	switch (m_eToolID)
 	{
 	case MAPTOOL::TILE:
-		MapTool.m_pTileTool->ViewLButtonDown(nFlags, point);
+		m_pMapTool->m_pTileTool->ViewLButtonDown(nFlags, point);
 		break;
 	case MAPTOOL::OBJECT:
-		MapTool.m_pObjectTool->ViewLButtonDown(nFlags, point);
+		m_pMapTool->m_pObjectTool->ViewLButtonDown(nFlags, point);
 		break;
 	case MAPTOOL::LINE:
-		MapTool.m_pLineTool->ViewLButtonDown(nFlags, point);
+		m_pMapTool->m_pLineTool->ViewLButtonDown(nFlags, point);
 		break;
 	case MAPTOOL::ID_END:
 		break;
@@ -226,18 +238,16 @@ void CMFCToolView::OnLButtonDown(UINT nFlags, CPoint point)
 
 void CMFCToolView::OnMouseMove(UINT nFlags, CPoint point)
 {
-	CMainFrame* pMainFrm = dynamic_cast<CMainFrame*>(AfxGetApp()->GetMainWnd());
-	CMapTool& MapTool = dynamic_cast<CMyForm*>(pMainFrm->m_SecondSplitterWnd.GetPane(1, 0))->m_MapTool;
 	switch (m_eToolID)
 	{
 	case MAPTOOL::TILE:
-		MapTool.m_pTileTool->ViewMouseMove(nFlags, point);
+		m_pMapTool->m_pTileTool->ViewMouseMove(nFlags, point);
 		break;
 	case MAPTOOL::OBJECT:
-		MapTool.m_pObjectTool->ViewMouseMove(nFlags, point);
+		m_pMapTool->m_pObjectTool->ViewMouseMove(nFlags, point);
 		break;
 	case MAPTOOL::LINE:
-		MapTool.m_pLineTool->ViewMouseMove(nFlags, point);
+		m_pMapTool->m_pLineTool->ViewMouseMove(nFlags, point);
 		break;
 	case MAPTOOL::ID_END:
 		break;
@@ -249,6 +259,7 @@ void CMFCToolView::OnMouseMove(UINT nFlags, CPoint point)
 		SetScrollPos(0, x + (m_tMouseOldPt.x-point.x));
 		SetScrollPos(1, y + (m_tMouseOldPt.y-point.y));
 		m_tMouseOldPt = point;
+		//ScrollToPosition(point); // 이상
 	}
 
 	CScrollView::OnMouseMove(nFlags, point);
@@ -273,4 +284,32 @@ void CMFCToolView::OnRButtonDown(UINT nFlags, CPoint point)
 	m_tMouseOldPt = point;
 
 	CScrollView::OnRButtonDown(nFlags, point);
+}
+
+void CMFCToolView::Draw_Background()
+{
+	if (!m_pBackgroundTex) return;
+	D3DXMATRIX matScale, matTrans, matWorld;
+
+	float fCenterX = m_pBackgroundTex->tImageInfo.Width * 0.5f;
+	float fCenterY = m_pBackgroundTex->tImageInfo.Height * 0.5f;
+	
+	float fScale = 0.3f;
+
+	float width = m_pBackgroundTex->tImageInfo.Width * fScale;
+	float height = m_pBackgroundTex->tImageInfo.Height * fScale;
+	int x = int(WINCX / width ) + 2;
+	int y = int(WINCY / height) + 2;
+
+	for (int i = 0; i < y; ++i) {
+		for (int j = 0; j < x; ++j) {
+			D3DXMatrixScaling(&matScale, fScale, fScale, 0.f);
+			D3DXMatrixTranslation(&matTrans, float(j * width), float(i * height), 0.f);
+			matWorld = matScale * matTrans;
+
+			GET_INSTANCE(CDevice)->Get_Sprite()->SetTransform(&matWorld);
+			GET_INSTANCE(CDevice)->Get_Sprite()->Draw(m_pBackgroundTex->pTexture, nullptr,
+				&D3DXVECTOR3(fCenterX, fCenterY, 0.f), nullptr, D3DCOLOR_ARGB(255, 255, 255, 255));
+		}
+	}
 }

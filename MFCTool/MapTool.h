@@ -36,7 +36,7 @@ public:
 	CComboBox m_LayerList;
 	CComboBox m_Backgrundlist;
 
-	CTerrain* m_pTerrainArr[MAPTOOL::ID_END];
+	CTerrain* m_pTerrainArr[LAYER::ID_END];
 
 public:
 	void Init_Terrain();
@@ -47,8 +47,6 @@ public:
 
 	afx_msg void OnBnClickedTileTool();
 	afx_msg void OnBnClickedButtonObjectTool();
-
-	afx_msg void OnCbnSelchangeComboTest();
 
 	afx_msg void OnBnClickedSave();
 	afx_msg void OnBnClickedLoad();

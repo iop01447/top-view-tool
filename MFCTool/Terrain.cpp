@@ -1,6 +1,11 @@
 #include "stdafx.h"
 #include "Terrain.h"
 #include "MFCToolView.h"
+#include "MainFrm.h"
+#include "MiniView.h"
+#include "MyForm.h"
+#include "MapTool.h"
+#include "TileTool.h"
 
 CTerrain::CTerrain()
 {
@@ -78,53 +83,6 @@ bool CTerrain::IsPicking(const D3DXVECTOR3 & rPos, const int & iIndex)
 
 	}
 	return true; 
-// 	// 두가지 직선의 방정식을 이용한 방식
-// 	// 또하나는 내적을 이용하는 방식.
-// 	//y = ax + b; 
-// 	//0 = ax + b - y ;
-// 	//1번째 기울기 구하기!
-// 	// 일단 기울기 부터 구하자. 
-// 
-// 	float fInclination[4] =
-// 	{
-// 		(TILECY / 2.f) / (TILECX / 2.f),
-// 		-(TILECY / 2.f) / (TILECX / 2.f),
-// 		(TILECY / 2.f) / (TILECX / 2.f),
-// 		-(TILECY / 2.f) / (TILECX / 2.f)
-// 	};
-// 
-// 	// 2. 꼭지점 구하기. 
-// 	// 꼭지점은 12, 3, 6, 9 시 순으로 구할 것. 
-// 	D3DXVECTOR3 vPoint[4] = 
-// 	{
-// 		{m_vecTile[iIndex]->vPos.x , m_vecTile[iIndex]->vPos.y + (TILECY * 0.5f), 0.f},
-// 		{m_vecTile[iIndex]->vPos.x + (TILECX * 0.5f), m_vecTile[iIndex]->vPos.y, 0.f},
-// 		{ m_vecTile[iIndex]->vPos.x , m_vecTile[iIndex]->vPos.y - (TILECY * 0.5f), 0.f },
-// 		{ m_vecTile[iIndex]->vPos.x - (TILECX * 0.5f), m_vecTile[iIndex]->vPos.y, 0.f }
-// 	};
-// 
-// 	// y 절편 구하기. (b)
-// 	// y = ax + b; -> b = y - ax 
-// 	float fIntercept[4] = 
-// 	{
-// 		vPoint[0].y - (fInclination[0] * vPoint[0].x),
-// 		vPoint[1].y - (fInclination[1] * vPoint[1].x),
-// 		vPoint[2].y - (fInclination[2] * vPoint[2].x),
-// 		vPoint[3].y - (fInclination[3] * vPoint[3].x)
-// 	};
-// 	
-// 	//0 = ax + b - y ; 임의의 점 x y 에 이제 rPos 즉 마우스 좌표를 대입해서 
-// 	// 양수냐 음수냐를 비교하면. 
-// 	// 깔끔하게 픽킹 완료. 
-// 	if (0 < fInclination[0] * rPos.x + fIntercept[0] - rPos.y && // 첫번째 선에서는 양수
-// 		0 < fInclination[1] * rPos.x + fIntercept[1] - rPos.y && // 둘째 선에서도 양수 
-// 		0 > fInclination[2] * rPos.x + fIntercept[2] - rPos.y && // 셋째 선에서는 음수 
-// 		0 > fInclination[3] * rPos.x + fIntercept[3] - rPos.y) // 넷째 선에서는 음수.  이 4가지 조건이 모두 참이라면
-// 		// 이것은 마우스 포인트 위치가 마름모 꼴 안에 있다. 
-// 		return true;
-// 
-// 
-// 	return false;
 }
 
 void CTerrain::SetRatio(D3DXMATRIX * pOut, const float & fRatioX, const float & fRatioY)
@@ -134,7 +92,6 @@ void CTerrain::SetRatio(D3DXMATRIX * pOut, const float & fRatioX, const float & 
 	21	22	23	24
 	31	32	33	34
 	41	42	43	44
-
 	*/
 	pOut->_11 *= fRatioX;
 	pOut->_21 *= fRatioX;
@@ -152,7 +109,6 @@ HRESULT CTerrain::Initialize(int iTileX, int iTileY, BYTE byDrawID, E_TILE::OPTI
 {
 	m_iTileX = iTileX;
 	m_iTileY = iTileY;
-
 	float fX = 0.f, fY = 0.f; 
 	TILE* pTile = nullptr; 
 	for (int i = 0 ; i < iTileY; ++i)
@@ -194,15 +150,44 @@ void CTerrain::Render()
 		//GetScrollPos - 스크롤 얻어오는 함수. 0일경우 x , 1일경우 y 
 
 		D3DXMatrixScaling(&matScale, pTile->vSize.x, pTile->vSize.y, 0.f); 
-		D3DXMatrixTranslation(&matTrans, pTile->vPos.x - m_pView->GetScrollPos(0), pTile->vPos.y - m_pView->GetScrollPos(1), 0.f);
+		D3DXMatrixTranslation(&matTrans, OFFSET + pTile->vPos.x - m_pView->GetScrollPos(0), OFFSET + pTile->vPos.y - m_pView->GetScrollPos(1), 0.f);
 		matWorld = matScale * matTrans; 
-		SetRatio(&matWorld, fX, fY);
+		//SetRatio(&matWorld, fX, fY);
 		// 크, 자, 이, 공, 부 
 		GET_INSTANCE(CDevice)->Get_Sprite()->SetTransform(&matWorld);
 		GET_INSTANCE(CDevice)->Get_Sprite()->Draw(pTexInfo->pTexture, nullptr, &D3DXVECTOR3(fCenterX, fCenterY, 0.f), nullptr, D3DCOLOR_ARGB(255, 255, 255, 255));
 
 		GET_INSTANCE(CDevice)->Get_Sprite()->SetTransform(&matWorld);
 		GET_INSTANCE(CDevice)->Get_Font()->DrawTextW(GET_INSTANCE(CDevice)->Get_Sprite(), szBuf, lstrlen(szBuf), nullptr, 0, D3DCOLOR_ARGB(255, 0,0,0));
+		
+		if (m_bDrawOption) {
+
+			const TEXINFO* pTexInfo = GET_INSTANCE(CTextureMgr)->Get_TexInfo(L"White");
+			if (nullptr == pTexInfo)
+				return;
+
+			float fScaleX = TILECX / (float)pTexInfo->tImageInfo.Width;
+			float fScaleY = TILECY / (float)pTexInfo->tImageInfo.Height;
+
+			float fCenterX = pTexInfo->tImageInfo.Width * 0.5f;
+			float fCenterY = pTexInfo->tImageInfo.Height * 0.5f;
+
+			D3DXMatrixScaling(&matScale, fScaleX, fScaleY, 0.f);
+			D3DXMatrixTranslation(&matTrans, OFFSET + pTile->vPos.x - m_pView->GetScrollPos(0), OFFSET + pTile->vPos.y - m_pView->GetScrollPos(1), 0.f);
+			matWorld = matScale * matTrans;
+			//SetRatio(&matWorld, fX, fY);
+
+			CMainFrame* pMainFrm = dynamic_cast<CMainFrame*>(AfxGetApp()->GetMainWnd());
+			CMyForm* pView = dynamic_cast<CMyForm*>(pMainFrm->m_SecondSplitterWnd.GetPane(1, 0));
+
+			D3DCOLORVALUE color = pView->m_MapTool.m_pTileTool->m_mapTileOptionColor[pTile->byOption];
+
+			GET_INSTANCE(CDevice)->Get_Sprite()->SetTransform(&matWorld);
+			GET_INSTANCE(CDevice)->Get_Sprite()->Draw(pTexInfo->pTexture,
+				nullptr, &D3DXVECTOR3(fCenterX, fCenterY, 0.f), nullptr, 
+				D3DCOLOR_ARGB(125, (int)color.r, (int)color.g, (int)color.b));
+		}
+
 		++iIndex; 
 	}
 	// 2D에서 직교백터를 뽑아내는 방법. 
@@ -222,14 +207,29 @@ void CTerrain::MiniRender()
 			return; 
 
 		float fCenterX = pTexInfo->tImageInfo.Width * 0.5f; 
-		float fCenterY = pTexInfo->tImageInfo.Height *0.5f; 
+		float fCenterY = pTexInfo->tImageInfo.Height * 0.5f; 
 
 		D3DXMatrixScaling(&matScale, m_vecTile[i]->vSize.x, m_vecTile[i]->vSize.y, 0.f); 
-		//D3DXMatrixTranslation(&matTrans, m_vecTile[i]->vPos.x - m_pView->GetScrollPos(0), m_vecTile[i]->vPos.y - m_pView->GetScrollPos(1), 0.f); 
-		//matWorld = matScale * matTrans; 
-		matWorld = matScale;
+		D3DXMatrixTranslation(&matTrans, m_vecTile[i]->vPos.x, m_vecTile[i]->vPos.y, 0.f); 
+		matWorld = matScale * matTrans; 
 
-		SetRatio(&matWorld, 1.f, 1.f);
+		int iWidth = pTexInfo->tImageInfo.Width;
+		int iHeight = pTexInfo->tImageInfo.Height;
+
+		//CMainFrame* pMain = dynamic_cast<CMainFrame*>(::AfxGetApp()->GetMainWnd());
+		//CMiniView* pView = dynamic_cast<CMiniView*>(pMain->m_SecondSplitterWnd.GetPane(0, 0));
+		//if (!pView) return;
+
+		//RECT rect{};
+		//pView->GetClientRect(&rect);
+		//float fScaleX = rect.right / float(iWidth * m_iTileX);
+		//float fScaleY = rect.bottom / float(iHeight * m_iTileY);
+
+		int iMaxTile = max(m_iTileX, m_iTileY);
+		float fScaleX = WINCX / float(iWidth * iMaxTile);
+		float fScaleY = WINCY / float(iHeight * iMaxTile);
+
+		SetRatio(&matWorld, fScaleX, fScaleY);
 
 		GET_INSTANCE(CDevice)->Get_Sprite()->SetTransform(&matWorld); 
 		GET_INSTANCE(CDevice)->Get_Sprite()->Draw(pTexInfo->pTexture, nullptr, &D3DXVECTOR3(fCenterX, fCenterY, 0.f), nullptr, D3DCOLOR_ARGB(255, 255, 255, 255));
@@ -237,26 +237,64 @@ void CTerrain::MiniRender()
 	}
 }
 
+void CTerrain::ChangeTileXY(int iTileX, int iTileY)
+{
+	vector<TILE*> vecTile;
+
+	float fX = 0.f, fY = 0.f;
+	TILE* pTile = nullptr;
+	for (int i = 0; i < iTileY; ++i)
+	{
+		for (int j = 0; j < iTileX; ++j)
+		{
+			fX = float((j * TILECX) + (TILECX >> 1));
+			fY = float((i * TILECY) + (TILECY >> 1));
+			pTile = new TILE;
+			pTile->vPos = { fX, fY, 0.f };
+			pTile->vSize = { 1.f, 1.f, 0.f };
+			pTile->byDrawID = 0;
+			pTile->byOption = 0;
+
+			size_t index = i * m_iTileX + j;
+			if (index < m_vecTile.size() &&
+				i < m_iTileY && j < m_iTileX) {
+				TILE* oldTile = m_vecTile[index];
+				pTile->byDrawID = oldTile->byDrawID;
+				pTile->byOption = oldTile->byOption;
+			}
+
+			vecTile.emplace_back(pTile);
+		}
+	}
+
+	Release();
+	m_vecTile = vecTile;
+
+	m_iTileX = iTileX;
+	m_iTileY = iTileY;
+}
+
 void CTerrain::Release()
 {
 	for_each(m_vecTile.begin(), m_vecTile.end(), Safe_Delete<TILE*>); 
-// 	for (auto& pTile : m_vecTile)
-// 	{
-// 		if (pTile)
-// 		{
-// 			delete pTile; 
-// 			pTile = nullptr; 
-// 		}
-// 	}
-	// ㅋㅋ 람다식이야. 신기하지 ? ㅋㅋㅋ
-// 	[&]() 
-// 	{
-// 		for (auto& pTile : m_vecTile)
-// 		{
-// 			Safe_Delete(pTile); 
-// 		}
-// 	}();
+
 	m_vecTile.clear(); 
-	//m_vecTile.swap(vector<TILE*>()); 
 	m_vecTile.shrink_to_fit();
+}
+
+
+HRESULT CTerrain::LoadTile(HANDLE hFile, size_t size)
+{
+	m_vecTile.reserve(size);
+
+	DWORD dwByte = 0;
+	TILE* pTile = nullptr;
+	for(int i=0; i<size; ++i)
+	{
+		pTile = new TILE;
+		ReadFile(hFile, pTile, sizeof(TILE), &dwByte, nullptr);
+		m_vecTile.emplace_back(pTile);
+	}
+
+	return S_OK;
 }

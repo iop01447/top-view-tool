@@ -35,6 +35,10 @@ public:
 	{
 		return m_pFont; 
 	}
+	ID3DXLine* Get_Line()
+	{
+		return m_pLine;
+	}
 public:
 	HRESULT InitDevice(); 
 	void Release(); 
@@ -42,6 +46,14 @@ public:
 public:
 	void Render_Begin();
 	void Render_End(HWND hWnd = nullptr); 
+
+	void Set_GridChack(bool chack) { bGridChack = chack; }
+	bool Get_GridChack() { return bGridChack; }
+	void GridSet(int iX,int iY);
+
+public:
+	void Line_Set(D3DXVECTOR2& rMouse);
+
 
 private:
 	static CDevice* m_pInstance; 
@@ -51,7 +63,6 @@ private:
 	LPD3DXSPRITE m_pSprite; 
 	LPDIRECT3DDEVICE9 m_pDevice;
 	//실질적인 그래픽 카드를 제어하는 컴객체. 
-
 	//com 객체 - component Object Model
 	/*
 	우리가 배우고 있는 DirectX도 3D 랜더링을 하기 위한 API이다. 그래픽을 제어하기 위해서는 많은 요소가 필요하다.
@@ -61,5 +72,16 @@ private:
 
 	*/
 
+	ID3DXLine* m_pLine;
+
+	bool bGridChack;
+
+	vector<LINE*> m_vGrid;
+	vector<LINE*> m_vGrid_Per;
+
+	LINE* pLineM;
+
+
+	vector<LINE*> m_vLine;
 };
 

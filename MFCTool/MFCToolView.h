@@ -7,6 +7,8 @@
 class CMFCToolDoc; 
 class CTerrain; 
 class CLine;
+class CMapTool;
+class CObj;
 class CMFCToolView : public CScrollView
 {
 protected: // serialization에서만 만들어집니다.
@@ -42,14 +44,25 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 public:
-	CTerrain* m_pTerrain;
+	CTerrain* m_pTerrain; // 저장
 	float m_fAngle;
 	int m_iColor;
 	int m_iChangeSpeed;
-	CLine* m_pLine;
+
+
+
 
 	MAPTOOL::ID m_eToolID{ MAPTOOL::ID_END };
 	CPoint m_tMouseOldPt;
+
+	int m_iBackgroundID{ 0 }; // 저장
+	TEXINFO* m_pBackgroundTex{ nullptr };
+
+	CMapTool* m_pMapTool{ nullptr };
+
+	list<CObj*> m_ObjList; // 저장
+
+
 
 public:
 	virtual void OnInitialUpdate();
@@ -57,6 +70,9 @@ public:
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
 	afx_msg void OnRButtonDown(UINT nFlags, CPoint point);
+
+public:
+	void Draw_Background();
 };
 
 #ifndef _DEBUG  // MFCToolView.cpp의 디버그 버전

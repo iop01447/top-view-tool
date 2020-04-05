@@ -13,6 +13,7 @@
 #include "TileTool.h"
 #include "ObjectTool.h"
 #include "LineTool.h"
+#include "Obj.h"
 
 // CMapTool 대화 상자입니다.
 
@@ -28,7 +29,7 @@ CMapTool::~CMapTool()
 	Safe_Delete(m_pTileTool);
 	Safe_Delete(m_pObjectTool);
 
-	for(int i=0; i<MAPTOOL::ID_END; ++i)
+	for(int i=0; i<LAYER::ID_END; ++i)
 		Safe_Delete(m_pTerrainArr[i]);
 }
 
@@ -36,12 +37,6 @@ void CMapTool::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_COMBO_TEST, m_LayerList);
-
-	for (int i = 0; i < LAYER::ID_END; ++i) {
-		m_LayerList.InsertString(i, LAYER::str[i].c_str());
-	}
-
-	m_LayerList.SetCurSel(0);
 	DDX_Control(pDX, IDC_COMBO_BACK_GRUND, m_Backgrundlist);
 }
 
@@ -59,73 +54,6 @@ END_MESSAGE_MAP()
 
 // CMapTool 메시지 처리기입니다.
 
-void CMapTool::OnBnClickedSave()
-{
-	//// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	CFileDialog Dlg(FALSE, L"dat", L"*.dat", OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, L"DataFile|*.dat||", this);
-	TCHAR szPath[MAX_STR] = L"";
-	GetCurrentDirectory(MAX_STR, szPath);
-
-	PathRemoveFileSpec(szPath);
-	lstrcat(szPath, L"\\Data");
-	Dlg.m_ofn.lpstrInitialDir = szPath;
-
-	if (IDOK != Dlg.DoModal()) return;
-	
-	CString strPath = Dlg.GetPathName();
-
-	HANDLE hFile = CreateFile(strPath.GetString(), GENERIC_WRITE, 0, 0, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
-
-	if (INVALID_HANDLE_VALUE == hFile)
-		return;
-
-	CMainFrame* pMain = dynamic_cast<CMainFrame*>(::AfxGetApp()->GetMainWnd());
-	CMFCToolView* pView = dynamic_cast<CMFCToolView*>(pMain->m_MainSplitterWnd.GetPane(0, 1));
-	
-	for (int i = 0; i < LAYER::ID_END; ++i) {
-		vector<TILE*>& rvecTerrain = m_pTerrainArr[i]->Get_Tile();
-
-		DWORD dwByte = 0;
-		for (auto& pTile : rvecTerrain)
-			WriteFile(hFile, pTile, sizeof(TILE), &dwByte, nullptr);
-	}
-
-	CloseHandle(hFile);
-	
-}
-
-
-void CMapTool::OnCbnSelchangeComboTest()
-{
-	//// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-
-	//int iIndex;
-	//iIndex = m_cbTest.GetCurSel();
-
-	//if (CB_ERR != iIndex)
-	//{
-	//	CString sName;
-	//	m_cbTest.GetLBText(iIndex, sName);
-	//	SetDlgItemText(IDC_COMBO_TEST, sName);
-
-	//	if (sName == L"1번째")
-	//	{
-	//		//원하는 명령1
-	//	}
-	//	else if (sName == L"2번째")
-	//	{
-	//		//2
-	//	}
-	//	else
-	//	{
-	//		//3
-	//	}
-	//}
-
-
-}
-
-
 void CMapTool::Init_Terrain()
 {
 	CMainFrame* pMain = dynamic_cast<CMainFrame*>(::AfxGetApp()->GetMainWnd());
@@ -139,7 +67,7 @@ void CMapTool::Init_Terrain()
 		if (nullptr == m_pTerrainArr[i])
 		{
 			m_pTerrainArr[i] = new CTerrain;
-			if (FAILED(m_pTerrainArr[i]->Initialize((i+1) * TILEX, (i + 1) * TILEY, i, E_TILE::OPTION_END)))
+			if (FAILED(m_pTerrainArr[i]->Initialize(TILEX, TILEY, 0, E_TILE::EMPTY)))
 				AfxMessageBox(L"Terrain Initialize Failed");
 			m_pTerrainArr[i]->Set_View(pView);
 		}
@@ -203,6 +131,13 @@ BOOL CMapTool::OnInitDialog()
 
 	if (m_pLineTool->GetSafeHwnd() == nullptr)
 		m_pLineTool->Create(IDD_LINETOOL);
+
+	for (int i = 0; i < LAYER::ID_END; ++i) {
+		m_LayerList.InsertString(i, LAYER::str[i].c_str());
+	}
+
+	m_LayerList.SetCurSel(0);
+
 	return TRUE;  // return TRUE unless you set the focus to a control
 				  // 예외: OCX 속성 페이지는 FALSE를 반환해야 합니다.
 }
@@ -238,11 +173,6 @@ void CMapTool::OnBnClickedLineTool()
 	CMFCToolView* pView = dynamic_cast<CMFCToolView*>(pMain->m_MainSplitterWnd.GetPane(0, 1));
 	pView->m_eToolID = MAPTOOL::LINE;
 }
-void CMapTool::OnBnClickedLoad()
-{
-	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-}
-
 
 void CMapTool::OnCbnLayerSelchange()
 {
@@ -254,13 +184,132 @@ void CMapTool::OnCbnLayerSelchange()
 	pView->m_pTerrain = m_pTerrainArr[index];
 
 	pView->SetScrollSizes(MM_TEXT, 
-		CSize(m_pTerrainArr[index]->m_iTileX * TILECX,
-			m_pTerrainArr[index]->m_iTileY * TILECY));
+		CSize(m_pTerrainArr[index]->m_iTileX * TILECX + OFFSET * 2,
+			m_pTerrainArr[index]->m_iTileY * TILECY + OFFSET * 2));
 
 }
 
 void CMapTool::OnCbnBackgroundSelchange()
 {
+	int index = m_Backgrundlist.GetCurSel();
+	CMainFrame* pMain = dynamic_cast<CMainFrame*>(::AfxGetApp()->GetMainWnd());
+	CMFCToolView* pView = dynamic_cast<CMFCToolView*>(pMain->m_MainSplitterWnd.GetPane(0, 1));
+	
+	pView->m_iBackgroundID = index;
+	pView->m_pBackgroundTex = CTextureMgr::Get_Instance()->Get_TexInfo(L"Background", L"Background", index);
+
 }
 
+void CMapTool::OnBnClickedSave()
+{
+	//// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	CFileDialog Dlg(FALSE, L"dat", L"*.dat", OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, L"DataFile|*.dat||", this);
+	TCHAR szPath[MAX_STR] = L"";
+	GetCurrentDirectory(MAX_STR, szPath);
 
+	PathRemoveFileSpec(szPath);
+	lstrcat(szPath, L"\\Data");
+	Dlg.m_ofn.lpstrInitialDir = szPath;
+
+	if (IDOK != Dlg.DoModal()) return;
+
+	CString strPath = Dlg.GetPathName();
+
+	HANDLE hFile = CreateFile(strPath.GetString(), GENERIC_WRITE, 0, 0, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
+
+	if (INVALID_HANDLE_VALUE == hFile)
+		return;
+
+	CMainFrame* pMain = dynamic_cast<CMainFrame*>(::AfxGetApp()->GetMainWnd());
+	CMFCToolView* pView = dynamic_cast<CMFCToolView*>(pMain->m_MainSplitterWnd.GetPane(0, 1));
+
+	DWORD dwByte = 0;
+	size_t size = 0;
+	for (int i = 0; i < LAYER::ID_END; ++i) {
+		vector<TILE*>& rvecTerrain = m_pTerrainArr[i]->Get_Tile();
+
+		size = rvecTerrain.size();
+		WriteFile(hFile, &size, sizeof(size_t), &dwByte, nullptr);
+
+		WriteFile(hFile, &m_pTerrainArr[i]->m_iTileX, sizeof(int), &dwByte, nullptr);
+		WriteFile(hFile, &m_pTerrainArr[i]->m_iTileY, sizeof(int), &dwByte, nullptr);
+
+		for (auto& pTile : rvecTerrain)
+			WriteFile(hFile, pTile, sizeof(TILE), &dwByte, nullptr);
+	}
+
+	WriteFile(hFile, &pView->m_iBackgroundID, sizeof(int), &dwByte, nullptr);
+
+	size = pView->m_ObjList.size();
+	WriteFile(hFile, &size, sizeof(size_t), &dwByte, nullptr);
+	for (auto& obj : pView->m_ObjList) {
+		WriteFile(hFile, &obj->m_iObjID, sizeof(int), &dwByte, nullptr);
+		WriteFile(hFile, &obj->m_tInfo, sizeof(INFO), &dwByte, nullptr);
+	}
+
+	CloseHandle(hFile);
+}
+
+void CMapTool::OnBnClickedLoad()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+
+	CFileDialog Dlg(TRUE, L"dat", L"*.dat", OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, L"DataFile|*.dat||", this);
+
+	TCHAR szPath[MAX_STR] = L"";
+	GetCurrentDirectory(MAX_STR, szPath);
+
+	PathRemoveFileSpec(szPath);
+	lstrcat(szPath, L"\\Data");
+	Dlg.m_ofn.lpstrInitialDir = szPath;
+
+	if (IDOK != Dlg.DoModal()) return;
+
+	CString strPath = Dlg.GetPathName();
+
+	HANDLE hFile = CreateFile(strPath.GetString(), GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
+
+	if (INVALID_HANDLE_VALUE == hFile)
+		return;
+
+	CMainFrame* pMain = dynamic_cast<CMainFrame*>(::AfxGetApp()->GetMainWnd());
+	CMFCToolView* pView = dynamic_cast<CMFCToolView*>(pMain->m_MainSplitterWnd.GetPane(0, 1));
+
+	DWORD dwByte = 0;
+	size_t size = 0;
+
+	for (int i = 0; i < LAYER::ID_END; ++i) {
+		if (m_pTerrainArr[i]) {
+			m_pTerrainArr[i]->Release();
+		}
+		ReadFile(hFile, &size, sizeof(size_t), &dwByte, nullptr);
+
+		ReadFile(hFile, &m_pTerrainArr[i]->m_iTileX, sizeof(int), &dwByte, nullptr);
+		ReadFile(hFile, &m_pTerrainArr[i]->m_iTileY, sizeof(int), &dwByte, nullptr);
+
+		m_pTerrainArr[i]->LoadTile(hFile, size);
+	}
+
+	m_LayerList.SetCurSel(0);
+	pView->SetScrollSizes(MM_TEXT,
+		CSize(m_pTerrainArr[0]->m_iTileX * TILECX + OFFSET * 2,
+			m_pTerrainArr[0]->m_iTileY * TILECY + OFFSET * 2));
+	pView->m_pTerrain = m_pTerrainArr[0];
+
+
+	ReadFile(hFile, &pView->m_iBackgroundID, sizeof(int), &dwByte, nullptr);
+	m_Backgrundlist.SetCurSel(pView->m_iBackgroundID);
+	pView->m_pBackgroundTex = CTextureMgr::Get_Instance()->Get_TexInfo(L"Background", L"Background", pView->m_iBackgroundID);
+
+	ReadFile(hFile, &size, sizeof(size_t), &dwByte, nullptr);
+	for_each(pView->m_ObjList.begin(), pView->m_ObjList.end(), Safe_Delete<CObj*>);
+	pView->m_ObjList.clear();
+	for (int i = 0; i < size; ++i) {
+		CObj* obj = new CObj;
+		ReadFile(hFile, &obj->m_iObjID, sizeof(int), &dwByte, nullptr);
+		ReadFile(hFile, &obj->m_tInfo, sizeof(INFO), &dwByte, nullptr);
+		pView->m_ObjList.push_back(obj);
+	}
+
+	CloseHandle(hFile);
+}
